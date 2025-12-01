@@ -1,0 +1,1 @@
+Ici composants globaux au projet 
