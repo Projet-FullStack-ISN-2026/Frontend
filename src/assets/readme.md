@@ -1,0 +1,1 @@
+Ici les ressources liés aux pages (images, css, js autre)
