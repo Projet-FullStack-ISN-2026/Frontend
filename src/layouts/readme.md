@@ -1,1 +1,0 @@
-Ici les structures globales du projet (exemple layout de quiz, footer, header, navbar)

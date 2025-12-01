@@ -1,1 +1,0 @@
-Ici les fonctions utiles à tous (Math, etc)
