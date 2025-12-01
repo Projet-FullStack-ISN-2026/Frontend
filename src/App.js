@@ -1,11 +1,12 @@
 import './assets/App.css';
 import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
+import WaitingScreen from './waitingScreen';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-function App() {
+function Home() {
   return (
     <div className="App">
-      <Navbar />
       <header className="App-header">
         <h1>Bienvenue sur le grand Quiz de TF8 !</h1>
         <img src={logo} className="App-logo" alt="logo" />
@@ -21,6 +22,20 @@ function App() {
         </p>
       </header>
     </div>
+  );
+}
+
+function App() {
+    return (
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/waitingScreen" element={<WaitingScreen />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
