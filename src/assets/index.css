@@ -11,3 +11,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Theme colors */
+:root {
+  --primary-gradient: linear-gradient(180deg, #010005, #28017c, #770056);
+  --primary-color: #28017c;
+  --secondary-color: #770056;
+  --accent-color: #a34fc0;
+  --text-light: rgba(255, 255, 255, 0.8);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}

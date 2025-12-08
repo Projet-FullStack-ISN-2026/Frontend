@@ -1,0 +1,29 @@
+import React from 'react';
+import '../../assets/PrintQuestion.css';
+import Timer from '../../layouts/timer';
+
+const PrintQuestion = () => {
+  return (
+    <div className="question-page">
+      <main className="question-card">
+        <h2 className="question-title">Question Title</h2>
+        <Timer />
+
+        <div className="options">
+          <button className="option">Option 1</button>
+          <button className="option">Option 2</button>
+          <button className="option">Option 3</button>
+          <button className="option">Option 4</button>
+          <button className="option">Next</button>
+        </div>
+
+        <div className="bottom-actions">
+          <button className="action-button">Show answer</button>
+          <button className="action-button">Show leaderboard</button>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default PrintQuestion;
