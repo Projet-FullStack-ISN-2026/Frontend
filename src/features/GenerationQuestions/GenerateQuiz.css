@@ -1,36 +1,102 @@
-.main{
+
+.main {
   background: linear-gradient(180deg, #010005, #28017c, #770056);
   min-height: 100vh;
-  font-size: calc(10px + 2vmin);
   color: white;
+  padding-top: 5%;
+  text-align: center;
+  position: relative;
+  overflow-x: hidden;
+
 }
 
 
-.input_theme{
-  justify-content: center;
-  margin-top: 15%;
-  border-radius: 2%;
-
-}
-.input_theme h2{
-  display: flex;
-  justify-content: center;
-}
-.input_theme input{
-    background-color: #9a9fac52;
-    border-radius: 2%;
-    color: #fff;
+.input_theme,
+.input_number_question {
+  margin-top: 40px;
 }
 
-.input_number_question{
-  display: flex;
-  justify-content: center;
-  margin-top: 3%;
+.input_theme h2,
+.input_number_question h2 {
+  margin-bottom: 15px;
 }
 
-.input_number_question input{
-    background-color: #9a9fac52;
-    border-radius: 2%;
-    color: #fff;
+.input_theme input,
+.input_number_question input {
+  width: 50%;
+  padding: 12px 20px;
+  background-color: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.1rem;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  transition: 0.2s;
 }
 
+.input_theme input:focus,
+.input_number_question input:focus {
+  background-color: rgba(255,255,255,0.25);
+  border-color: white;
+}
+
+
+button {
+  padding: 15px 40px;
+  margin-top: 50px;
+  font-size: 22px;
+  font-weight: 700;
+  border: 2px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+  background: transparent;
+  color: white;
+  box-shadow: 0 0 15px rgba(255,255,255,0.3);
+  transition: 0.25s;
+}
+
+button:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+}
+
+.popup {
+  position: absolute;
+  top: 20px;
+  right: -350px;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  z-index: 999;
+  opacity: 0;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.popup-error {
+  background: #212422;
+  box-shadow: 0 0 12px rgba(211, 80, 80, 0.8);
+}
+
+.popup-ok {
+  background: #212422;
+  box-shadow: 0 0 12px rgba(49, 219, 106, 0.8);
+}
+
+.slide-in {
+  animation: slideInOut 1.5s forwards ease-in-out;
+}
+
+@keyframes slideInOut {
+  0% { right: -350px; opacity: 0; }
+  20% { right: 20px; opacity: 1; }
+  80% { right: 20px; opacity: 1; }
+  100% { right: -350px; opacity: 0; }
+}
+
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
