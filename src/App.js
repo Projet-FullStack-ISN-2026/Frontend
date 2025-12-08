@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './layouts/footer';
 import QuizStart from './features/Quiz/QuizStart';
 import PrintQuestion from './features/Quiz/PrintQuestion';
+import Ranking from './features/Quiz/Ranking';
 
 function Home() {
   return (
@@ -35,7 +36,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/features/Quiz/PrintQuestion" element={<PrintQuestion />} />
+          <Route path="/features/Quiz/Ranking" element={<Ranking />} />
         </Routes>
         <Footer />
       </div>
