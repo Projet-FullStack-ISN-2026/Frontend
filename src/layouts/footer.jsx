@@ -5,12 +5,7 @@ const Footer = () => {
   return (
     <footer>
       <div>
-        <p>© 2025 MonSiteWeb. Tous droits réservés.</p>
-        <ul className="footer-links"> 
-          <li><a href="/about">À propos</a></li>
-          <li><a href="/contact">Contact</a></li>
-          <li><a href="/privacy">Politique de confidentialité</a></li>
-        </ul>
+        <p>© 2025 le grand Quiz de TF8. Tous droits réservés à Esigelec.</p>
       </div>
     </footer>
   );
