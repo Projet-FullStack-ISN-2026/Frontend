@@ -5,14 +5,21 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Vérifier si l'utilisateur était connecté au chargement
     useEffect(() => {
         const storedUser = localStorage.getItem('currentUser');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            setIsAuthenticated(true);
+            try {
+                setUser(JSON.parse(storedUser));
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+                localStorage.removeItem('currentUser');
+            }
         }
+        setIsLoading(false);
     }, []);
 
     const login = (email) => {
@@ -29,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

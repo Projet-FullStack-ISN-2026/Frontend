@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './contexts/AuthContext';
 
 
 const inscriptionStyles = {
@@ -67,7 +68,15 @@ const inscriptionStyles = {
 };
 
 const Inscription = () => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
+    const { isAuthenticated } = useContext(AuthContext);
+    
+    // Rediriger vers quizzes si déjà connecté
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/quizzes');
+        }
+    }, [isAuthenticated, navigate]);
     
     const handleSubmit = (e) => {
         e.preventDefault();

@@ -3,12 +3,13 @@ import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
 import WaitingScreen from './features/waitingScreen';
 import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
+import QuizList from './features/Quiz/QuizList';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
 import Connection from './connexion'; 
 import Inscription from './inscription';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
-import { useContext } from 'react'; 
+import { useContext, useEffect, useState } from 'react'; 
 
 function Home() {
   return (
@@ -33,7 +34,13 @@ function Home() {
 
 // Composant pour protéger les routes
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
+  
+  // Attendre que l'authentification soit vérifiée
+  if (isLoading) {
+    return <div style={{background: 'linear-gradient(180deg, #010005, #28017c, #770056)', minHeight: '100vh'}}></div>;
+  }
+  
   return isAuthenticated ? children : <Navigate to="/connexion" />;
 }
 
@@ -47,6 +54,14 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/connexion" element={<Connection />} />
             <Route path="/inscription" element={<Inscription />} />
+            <Route 
+              path="/quizzes" 
+              element={
+                <ProtectedRoute>
+                  <QuizList />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/GenerateQuiz" 
               element={
