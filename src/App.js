@@ -1,10 +1,10 @@
 import './assets/App.css';
 import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
-import WaitingScreen from './waitingScreen';
+import WaitingScreen from './features/waitingScreen';
 import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import Footer from './layouts/footer';
 function Home() {
   return (
     <div className="App">
@@ -33,9 +33,10 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/waitingScreen" element={<WaitingScreen />} />
+          <Route path="/features/waitingScreen" element={<WaitingScreen />} />
           <Route path="/GenerateQuiz" element={<GenerateQuiz />} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   );
