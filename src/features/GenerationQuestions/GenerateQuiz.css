@@ -1,0 +1,36 @@
+.main{
+  background: linear-gradient(180deg, #010005, #28017c, #770056);
+  min-height: 100vh;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+
+.input_theme{
+  justify-content: center;
+  margin-top: 15%;
+  border-radius: 2%;
+
+}
+.input_theme h2{
+  display: flex;
+  justify-content: center;
+}
+.input_theme input{
+    background-color: #9a9fac52;
+    border-radius: 2%;
+    color: #fff;
+}
+
+.input_number_question{
+  display: flex;
+  justify-content: center;
+  margin-top: 3%;
+}
+
+.input_number_question input{
+    background-color: #9a9fac52;
+    border-radius: 2%;
+    color: #fff;
+}
+

@@ -2,8 +2,14 @@ import './assets/App.css';
 import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
 import WaitingScreen from './features/waitingScreen';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
+import Connection from './connexion'; 
+import Inscription from './inscription';
+import { AuthProvider, AuthContext } from './contexts/AuthContext';
+import { useContext } from 'react'; 
+
 function Home() {
   return (
     <div className="App">
@@ -25,18 +31,35 @@ function Home() {
   );
 }
 
+// Composant pour protéger les routes
+function ProtectedRoute({ children }) {
+  const { isAuthenticated } = useContext(AuthContext);
+  return isAuthenticated ? children : <Navigate to="/connexion" />;
+}
+
 function App() {
     return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/features/waitingScreen" element={<WaitingScreen />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/connexion" element={<Connection />} />
+            <Route path="/inscription" element={<Inscription />} />
+            <Route 
+              path="/GenerateQuiz" 
+              element={
+                <ProtectedRoute>
+                  <GenerateQuiz />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 
