@@ -14,6 +14,7 @@ function Navbar(){
         <div className="navbar-nav">
             <a className="nav-link" href="/features/waitingScreen">Connexion</a>
             <a className="nav-link" href="#">Inscription</a>
+            <a className="nav-link" href="/GenerateQuiz">GenerateQuiz</a>
         </div>
         </div>
     </div>

@@ -2,6 +2,7 @@ import './assets/App.css';
 import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
 import WaitingScreen from './features/waitingScreen';
+import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './layouts/footer';
 function Home() {
@@ -33,6 +34,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/features/waitingScreen" element={<WaitingScreen />} />
+          <Route path="/GenerateQuiz" element={<GenerateQuiz />} />
         </Routes>
         <Footer />
       </div>
