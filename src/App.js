@@ -3,6 +3,8 @@ import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
 import WaitingScreen from './waitingScreen';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Footer from './layouts/footer';
+import QuizStart from './features/Quiz/QuizStart';
 
 function Home() {
   return (
@@ -14,7 +16,7 @@ function Home() {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
           sed do eiusmod tempor incididunt ut labore et dolore magna 
           aliqua. Ut enim ad minim veniam, quis nostrud
-          exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          exercitationn ullamco laboris nisi ut aliquip ex ea commodo
            consequat. Duis aute irure dolor in reprehenderit in voluptate velit 
           esse cillum dolore eu fugiat nulla pariatur. 
           Excepteur sint occaecat cupidatat non proident, 
@@ -32,8 +34,9 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/waitingScreen" element={<WaitingScreen />} />
+          <Route path="/features/Quiz/QuizStart" element={<QuizStart />} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   );
