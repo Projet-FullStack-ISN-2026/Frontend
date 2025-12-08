@@ -31,10 +31,8 @@ function Navbar(){
                 </>
             ) : (
                 <>
-                    <a className="nav-link" href="/GenerateQuiz">GenerateQuiz</a>
-                    <span className="nav-link" style={{cursor: 'default'}}>
-                        👤 {user?.email}
-                    </span>
+                    <a className="nav-link" href="/quizzes">Quiz</a>
+                    <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
                     <button 
                         className="nav-link btn btn-link" 
                         onClick={handleLogout}

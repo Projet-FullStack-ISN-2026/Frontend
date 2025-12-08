@@ -1,12 +1,13 @@
 import React from 'react';
 import '../../assets/PrintQuestion.css';
+import Timer from '../../layouts/timer';
 
 const PrintQuestion = () => {
   return (
     <div className="question-page">
       <main className="question-card">
         <h2 className="question-title">Question Title</h2>
-        <div className="timer">00:20</div>
+        <Timer />
 
         <div className="options">
           <button className="option">Option 1</button>

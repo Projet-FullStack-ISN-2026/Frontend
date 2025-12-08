@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 
@@ -101,10 +101,17 @@ const formStyles = {
 
 const Connection = () => {
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+    const { login, isAuthenticated } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
+    // Rediriger vers quizzes si déjà connecté
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/quizzes');
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
