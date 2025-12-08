@@ -1,0 +1,109 @@
+/* Page background matches site gradient */
+.print-question-root {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #010005, #28017c, #770056);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.pq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  color: rgba(255,255,255,0.9);
+}
+
+.pq-logo {
+  font-weight: 700;
+}
+
+.pq-close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+}
+
+.pq-card {
+  width: min(1100px, 94%);
+  margin: 24px auto 48px auto;
+  padding: 28px 48px 48px 48px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  /* subtle inner card look while keeping gradient visible */
+  background: linear-gradient(180deg, rgba(1,0,5,0.18), rgba(119,0,86,0.06));
+  backdrop-filter: blur(6px);
+}
+
+.pq-title {
+  text-align: center;
+  font-size: clamp(20px, 3vw, 28px);
+  margin: 6px 0 6px 0;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.pq-timer {
+  text-align: center;
+  margin: 6px 0 18px 0;
+  color: rgba(255,255,255,0.9);
+}
+
+.pq-options {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 14px 0 22px 0;
+}
+
+.pq-option {
+  width: 100%;
+  padding: 18px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255,255,255,0.02);
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+}
+
+.pq-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  background: rgba(255,255,255,0.03);
+}
+
+.pq-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.pq-action {
+  padding: 16px 18px;
+  font-weight: 600;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 2px solid rgba(255,255,255,0.12);
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (max-width: 680px) {
+  .pq-card {
+    padding: 20px;
+    width: 94%;
+  }
+
+  .pq-action {
+    padding: 14px 12px;
+  }
+}
