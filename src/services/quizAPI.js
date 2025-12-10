@@ -1,15 +1,20 @@
 // Service API pour les quiz
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api/v0.0.3';
 
+const getStoredToken = () => {
+  return localStorage.getItem('authToken') || null;
+};
+
 export const quizAPI = {
   // Récupérer tous les quiz
   getAllQuizzes: async (token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 
@@ -27,11 +32,12 @@ export const quizAPI = {
   // Récupérer les détails d'un quiz
   getQuizDetails: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 
@@ -49,11 +55,12 @@ export const quizAPI = {
   // Créer un nouveau quiz (Admin/Animateur)
   createQuiz: async (title, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         },
         body: JSON.stringify({ title })
       });
@@ -72,11 +79,12 @@ export const quizAPI = {
   // Lancer un quiz
   startQuiz: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/control/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 
@@ -94,11 +102,12 @@ export const quizAPI = {
   // Rejoindre un quiz
   joinQuiz: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         },
         body: JSON.stringify({})
       });
@@ -117,11 +126,12 @@ export const quizAPI = {
   // Récupérer la question actuelle
   getCurrentQuestion: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/play/current-question`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 
@@ -139,11 +149,12 @@ export const quizAPI = {
   // Soumettre une réponse
   submitAnswer: async (quizId, optionId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/play/answer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         },
         body: JSON.stringify({ optionId })
       });
@@ -162,11 +173,12 @@ export const quizAPI = {
   // Récupérer le classement
   getLeaderboard: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/play/leaderboard`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 
@@ -184,11 +196,12 @@ export const quizAPI = {
   // Récupérer les stats (Admin/Animateur)
   getStats: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/admin/stats`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 
@@ -206,11 +219,12 @@ export const quizAPI = {
   // Récupérer la réponse (Admin/Animateur)
   getAnswer: async (quizId, token) => {
     try {
+      const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/admin/answer`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
         }
       });
 

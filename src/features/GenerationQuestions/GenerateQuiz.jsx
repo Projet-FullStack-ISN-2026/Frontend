@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./GenerateQuiz.css";
+import quizAPI from '../../services/quizAPI';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function GenerateQuiz() {
   const [valueTexte, setValueTexte] = useState("");
@@ -26,24 +28,8 @@ function GenerateQuiz() {
   setIsLoading(true);
 
   try {
-    const response = await fetch("https://virtserver.swaggerhub.com/esigelec-fff/TF8/0.02/quiz", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        subject: valueTexte,
-        count: valueNumber,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("error server");
-    }
-
-    const data = await response.json();
-    console.log("API RESPONSE :", data);
-
+    const title = valueTexte || `Quiz généré (${new Date().toLocaleString()})`;
+    await quizAPI.createQuiz(title);
     triggerPopup("ok");
   } catch (err) {
     console.error("API ERROR :", err);
