@@ -10,7 +10,7 @@ function ModifyQuiz() {
    
     const loadQuestions = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/esigelec-3a2/test/1.0.0/quiz/${quizID}/questions`);
+            const response = await fetch(`http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/quiz/${quizID}/questions`);
 
             if (response.status === 404) {
                 alert("Quiz non trouvé.");
@@ -34,7 +34,7 @@ function ModifyQuiz() {
     const deleteQuestion = async (questionId) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/esigelec-3a2/test/1.0.0/quiz/${quizID}/questions/${questionId}`,
+                `http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/quiz/${quizID}/questions/${questionId}`,
                 { method: "DELETE" }
             );
 
@@ -65,7 +65,7 @@ function ModifyQuiz() {
     const updateQuestion = async (questionId, questionData) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/esigelec-3a2/test/1.0.0/questions/${questionId}`,
+                `http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/questions/${questionId}`,
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },

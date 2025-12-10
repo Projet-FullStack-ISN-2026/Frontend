@@ -28,7 +28,7 @@ function GenerateQuiz() {
   setIsLoading(true);
 
   try {
-    const response = await fetch("http://localhost:8080/esigelec-3a2/test/1.0.0/quiz", {
+    const response = await fetch("http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/quiz", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
