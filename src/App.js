@@ -55,7 +55,7 @@ function App() {
             <Route path="/connexion" element={<Connection />} />
             <Route path="/inscription" element={<Inscription />} />
             <Route 
-              path="/quizzes" 
+              path="/quiz" 
               element={
                 <ProtectedRoute>
                   <QuizList />

@@ -7,7 +7,7 @@ import '../../assets/QuizList.css';
 const QuizList = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuiz] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -24,22 +24,22 @@ const QuizList = () => {
 
   // Charger les quiz au montage du composant
   useEffect(() => {
-    const loadQuizzes = async () => {
+    const loadQuiz = async () => {
       try {
         setLoading(true);
         // Essayer de récupérer depuis l'API
         const data = await quizAPI.getAllQuizzes();
-        setQuizzes(data || mockQuizzes);
+        setQuiz(data || mockQuizzes);
       } catch (err) {
         console.warn('API non disponible, utilisation des données en dur');
         // Fallback sur les données en dur
-        setQuizzes(mockQuizzes);
+        setQuiz(mockQuizzes);
       } finally {
         setLoading(false);
       }
     };
 
-    loadQuizzes();
+    loadQuiz();
   }, []);
 
   const getDifficultyColor = (difficulty) => {

@@ -13,7 +13,7 @@ const Connection = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/quizzes');
+            navigate('/quiz');
         }
     }, [isAuthenticated, navigate]);
 
@@ -24,7 +24,7 @@ const Connection = () => {
         try {
             const data = await authAPI.login({ email, password });
             login(data);
-            navigate('/quizzes');
+            navigate('/quiz');
         } catch (err) {
             console.error('Erreur login:', err);
             setError(err.message || 'Email ou mot de passe incorrect');
