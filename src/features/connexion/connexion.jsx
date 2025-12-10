@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from './contexts/AuthContext';
-import authAPI from './services/authAPI';
-import './assets/connexion.css';
+import { AuthContext } from '../../contexts/AuthContext';
+import authAPI from '../../services/authAPI';
+import '../../assets/connexion.css';
 
 const Connection = () => {
     const navigate = useNavigate();
