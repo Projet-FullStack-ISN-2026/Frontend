@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./GenerateQuiz.css";
+import quizAPI from '../../services/quizAPI';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function GenerateQuiz() {
   const [valueTexte, setValueTexte] = useState("");

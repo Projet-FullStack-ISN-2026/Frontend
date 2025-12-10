@@ -22,28 +22,33 @@ function Navbar(){
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div className="navbar-nav">
-            {!isAuthenticated ? (
-                <>
-                    <a className="nav-link" href="/connexion">Connexion</a>
-                    <a className="nav-link" href="/inscription">Inscription</a>
-                </>
-            ) : (
-                <>
-                    <a className="nav-link" href="/quizzes">Quiz</a>
-                    <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
-                    <button 
-                        className="nav-link btn btn-link" 
-                        onClick={handleLogout}
-                        style={{textDecoration: 'none', color: 'inherit'}}
-                    >
-                        Déconnexion
-                    </button>
-                </>
-            )}
-        </div>
-        </div>
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div className="navbar-nav me-auto">
+                        {!isAuthenticated ? (
+                            <>
+                                <a className="nav-link" href="/connexion">Connexion</a>
+                                <a className="nav-link" href="/inscription">Inscription</a>
+                            </>
+                        ) : (
+                            <>
+                                <a className="nav-link" href="/quizzes">Quiz</a>
+                                <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="navbar-nav ms-auto">
+                        {isAuthenticated && (
+                            <button
+                                className="nav-link btn btn-link"
+                                onClick={handleLogout}
+                                style={{ textDecoration: 'none', color: 'inherit' }}
+                            >
+                                Déconnexion
+                            </button>
+                        )}
+                    </div>
+                </div>
     </div>
     </nav>
     )
