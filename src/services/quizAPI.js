@@ -7,7 +7,7 @@ const getStoredToken = () => {
 
 export const quizAPI = {
   // Récupérer tous les quiz
-  getAllQuizzes: async (token) => {
+  getAllQuiz: async (token) => {
     try {
       const authToken = token || getStoredToken();
       const response = await fetch(`${API_BASE_URL}/quiz`, {

@@ -1,5 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api/v0.0.3';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/';
 // Compte en dur pour les tests
 const TEST_ACCOUNT = {
   firstName: 'Marius',
@@ -10,7 +9,6 @@ const TEST_ACCOUNT = {
 
 const authAPI = {
   register: async (payload) => {
-    // Vérifier si c'est le compte de test
     if (
       payload.firstName === TEST_ACCOUNT.firstName &&
       payload.lastName === TEST_ACCOUNT.lastName &&
@@ -43,9 +41,8 @@ const authAPI = {
   },
 
   login: async ({ email, password }) => {
-    // Vérifier si c'est le compte de test
     if (email === TEST_ACCOUNT.email && password === TEST_ACCOUNT.password) {
-      // Retourner une réponse de test
+
       return {
         token: 'test-token-' + Date.now(),
         user: {

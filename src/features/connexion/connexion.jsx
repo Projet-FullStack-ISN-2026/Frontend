@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from './contexts/AuthContext';
-import authAPI from './services/authAPI';
-import './assets/connexion.css';
+import { AuthContext } from '../../contexts/AuthContext';
+import authAPI from '../../services/authAPI';
+import '../../assets/connexion.css';
 
 const Connection = () => {
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Connection = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/quizzes');
+            navigate('/quiz');
         }
     }, [isAuthenticated, navigate]);
 
@@ -24,7 +24,7 @@ const Connection = () => {
         try {
             const data = await authAPI.login({ email, password });
             login(data);
-            navigate('/quizzes');
+            navigate('/quiz');
         } catch (err) {
             console.error('Erreur login:', err);
             setError(err.message || 'Email ou mot de passe incorrect');
