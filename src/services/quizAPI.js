@@ -24,7 +24,7 @@ export const quizAPI = {
 
       return await response.json();
     } catch (error) {
-      console.error('Erreur API getAllQuizzes:', error);
+      console.error('Erreur API getAllquiz:', error);
       throw error;
     }
   },

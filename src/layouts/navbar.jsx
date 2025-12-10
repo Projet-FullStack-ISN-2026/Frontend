@@ -1,5 +1,6 @@
 import logo from '../assets/logo_tf8.png';
 import '../assets/Navbar.css';
+import showAlert from '../pop_up';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
@@ -9,6 +10,7 @@ function Navbar(){
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        showAlert("Log out success !")
         logout();
         navigate('/');
     };
@@ -37,20 +39,22 @@ function Navbar(){
                         )}
                     </div>
 
-                    <div className="navbar-nav ms-auto">
+                    <div className="nav justify-content-center">
                         {isAuthenticated && (
-                            <button
+                            <a
                                 className="nav-link btn btn-link"
                                 onClick={handleLogout}
-                                style={{ textDecoration: 'none', color: 'inherit' }}
+                                style={{ textDecoration: 'none', color: 'inherit',display: 'flex', justifyContent :'center',  }}
                             >
                                 Déconnexion
-                            </button>
+                            </a>
                         )}
                     </div>
                 </div>
     </div>
+    <div id="alert-container" style={{ position: 'fixed', top: '20px', right: '20px', zIndex : '9999'}}></div>
     </nav>
+    
     )
 }
 

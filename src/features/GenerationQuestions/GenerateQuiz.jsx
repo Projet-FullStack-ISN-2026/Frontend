@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./GenerateQuiz.css";
 import quizAPI from '../../services/quizAPI';
 import { AuthContext } from '../../contexts/AuthContext';
+import showAlert from "../../pop_up";
 
 function GenerateQuiz() {
   const [valueTexte, setValueTexte] = useState("");
@@ -21,7 +22,7 @@ function GenerateQuiz() {
   if (isLoading) return;
 
   if (valueTexte.trim() === "" || valueNumber.trim() === "") {
-    triggerPopup("empty");
+    showAlert("Please fill all fields!")
     return;
   }
 
@@ -46,10 +47,10 @@ function GenerateQuiz() {
     const data = await response.json();
     console.log("API RESPONSE :", data);
 
-    triggerPopup("ok");
+    showAlert("Quiz Generated Successfully!")
   } catch (err) {
     console.error("API ERROR :", err);
-    triggerPopup("error");
+    showAlert("Error API")
   }
 
   setTimeout(() => setIsLoading(false), 1200);
@@ -57,23 +58,6 @@ function GenerateQuiz() {
 
   return (
     <div className="main">
-
-      {showPopup === "empty" && (
-        <div className="popup popup-error slide-in">
-           <span>Please fill all fields!</span>
-        </div>
-      )}
-
-      {showPopup === "ok" && (
-        <div className="popup popup-ok slide-in">
-           <span>Quiz Generated Successfully!</span>
-        </div>
-      )}
-      {showPopup === "error" && (
-        <div className="popup popup-error slide-in">
-           <span>Error API</span>
-        </div>
-      )}
       
 
       <h1>Generate a Quiz</h1>
