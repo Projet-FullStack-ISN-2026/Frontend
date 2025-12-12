@@ -15,22 +15,6 @@ function GenerateQuiz() {
       return;
     }
 
-<<<<<<< HEAD
-  setIsLoading(true);
-
-  try {
-    // Use quizAPI.createQuiz - if MOCK mode active this will create a quiz locally
-    const data = await quizAPI.createQuiz(valueTexte, Number(valueNumber));
-    console.log('Quiz created (mock or api):', data);
-    triggerPopup('ok');
-  } catch (err) {
-    console.error('API ERROR :', err);
-    triggerPopup('error');
-  }
-
-  setTimeout(() => setIsLoading(false), 1200);
-};
-=======
     setIsLoading(true);
     //http://localhost/3001/quiz
     //http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/quiz
@@ -62,7 +46,6 @@ function GenerateQuiz() {
 
     setTimeout(() => setIsLoading(false), 1200);
   };
->>>>>>> origin/dev
 
   return (
     <div className="main">
