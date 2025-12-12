@@ -1,0 +1,29 @@
+<script src="ClientWS.js"></script>
+<script>
+    
+    // --- 1. JEU DE DONNEES DE TEST ---
+
+    const questionTest = {
+        id: 42,
+        question: "Quel protocole permet une communication bidirectionnelle ?"
+    };
+
+    const optionsTest = [
+        { id: 101, text: "HTTP" },
+        { id: 102, text: "FTP" },
+        { id: 103, text: "WebSocket" },
+        { id: 104, text: "SMTP" }
+    ];
+
+    // Creation du client
+    const client = new ClientWS();
+    
+    // Connexion
+    client.connect();
+
+    // Envoi des commandes (grece aux promesses, elles attendront que la connexion soit prete)
+    console.log("Lancement du test...");
+    client.nextQuestion(questionTest, optionsTest);
+
+    client.test();
+</script>

@@ -10,6 +10,7 @@ import Connection from './features/connexion/connexion';
 import Inscription from './features/inscription/inscription';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react'; 
+import ClientWS from './features/websocket/clientWS'
 
 //const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/';
 function Home() {
