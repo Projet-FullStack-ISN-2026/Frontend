@@ -10,7 +10,6 @@ const TEST_ACCOUNT = {
 
 const authAPI = {
   register: async (payload) => {
-    // Vérifier si c'est le compte de test
     if (
       payload.firstName === TEST_ACCOUNT.firstName &&
       payload.lastName === TEST_ACCOUNT.lastName &&
@@ -43,9 +42,8 @@ const authAPI = {
   },
 
   login: async ({ email, password }) => {
-    // Vérifier si c'est le compte de test
     if (email === TEST_ACCOUNT.email && password === TEST_ACCOUNT.password) {
-      // Retourner une réponse de test
+
       return {
         token: 'test-token-' + Date.now(),
         user: {
