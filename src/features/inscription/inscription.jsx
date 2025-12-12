@@ -16,7 +16,7 @@ const Inscription = () => {
     //rediriger vers quizzes si déjà connecté
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/quizzes');
+            navigate('/quiz');
         }
     }, [isAuthenticated, navigate]);
     
@@ -29,7 +29,7 @@ const Inscription = () => {
             const res = await (await import('../../services/authAPI')).default.register(payload);
             if (res && res.token) {
                 login(res);
-                navigate('/quizzes');
+                navigate('/quiz');
             } else {
                 navigate('/connexion');
             }
