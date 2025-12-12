@@ -7,6 +7,7 @@ import { AuthContext } from '../contexts/AuthContext';
 function Navbar(){
     const { isAuthenticated, user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const isAdmin = user?.role === 100;
 
     const handleLogout = () => {
         logout();
@@ -32,7 +33,9 @@ function Navbar(){
                         ) : (
                             <>
                                 <a className="nav-link" href="/quiz">Quiz</a>
-                                <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
+                                {isAdmin && (
+                                  <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
+                                )}
                                 <a className="nav-link" href="/waitingScreen">Waiting Screen</a>
                             </>
                         )}
