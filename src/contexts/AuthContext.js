@@ -39,15 +39,25 @@ export const AuthProvider = ({ children }) => {
         }
 
         const { token: newToken, user: userObj } = authData;
+        const fallbackUserObj = !userObj && (authData.email || authData.role || authData.id)
+            ? {
+                id: authData.id,
+                email: authData.email,
+                firstName: authData.firstName,
+                lastName: authData.lastName,
+                role: authData.role,
+              }
+            : null;
         if (newToken) {
             setToken(newToken);
             localStorage.setItem('authToken', newToken);
         }
 
-        if (userObj) {
-            setUser(userObj);
+        if (userObj || fallbackUserObj) {
+            const finalUserObj = userObj || fallbackUserObj;
+            setUser(finalUserObj);
             setIsAuthenticated(true);
-            localStorage.setItem('currentUser', JSON.stringify(userObj));
+            localStorage.setItem('currentUser', JSON.stringify(finalUserObj));
         }
     };
 
