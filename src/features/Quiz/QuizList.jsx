@@ -57,6 +57,7 @@ const QuizList = () => {
 
   const handleQuizClick = (quizId) => {
     navigate(`/quiz/${quizId}`);
+    
   };
 
   if (loading) {

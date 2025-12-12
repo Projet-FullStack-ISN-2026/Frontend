@@ -1,5 +1,5 @@
 import Navbar from './layouts/navbar'
-
+//TODO: finir la page histogramme
 function Histogram(){
     return (
         <div className='Main'>
