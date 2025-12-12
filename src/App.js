@@ -3,13 +3,15 @@ import Navbar from './layouts/navbar'
 import logo from './assets/logo_tf8.png';
 import WaitingScreen from './features/waitingScreen';
 import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
+import QuizList from './features/Quiz/QuizList';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
-import Connection from './connexion'; 
-import Inscription from './inscription';
+import Connection from './features/connexion/connexion'; 
+import Inscription from './features/inscription/inscription';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
-import { useContext } from 'react'; 
+import { useContext, useEffect, useState } from 'react'; 
 
+//const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/';
 function Home() {
   return (
     <div className="App">
@@ -33,7 +35,13 @@ function Home() {
 
 // Composant pour protéger les routes
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
+  
+  // Attendre que l'authentification soit vérifiée
+  if (isLoading) {
+    return <div style={{background: 'linear-gradient(180deg, #010005, #28017c, #770056)', minHeight: '100vh'}}></div>;
+  }
+  
   return isAuthenticated ? children : <Navigate to="/connexion" />;
 }
 
@@ -47,6 +55,14 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/connexion" element={<Connection />} />
             <Route path="/inscription" element={<Inscription />} />
+            <Route 
+              path="/quiz" 
+              element={
+                <ProtectedRoute>
+                  <QuizList />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/GenerateQuiz" 
               element={
@@ -63,4 +79,4 @@ function App() {
   );
 }
 
-export default App;
+export default App ;
