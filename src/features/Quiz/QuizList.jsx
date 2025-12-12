@@ -7,7 +7,7 @@ import '../../assets/QuizList.css';
 const QuizList = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [quiz, setQuiz] = useState([]);
+  const [quizzes, setQuiz] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lobbyStatus, setLobbyStatus] = useState({}); // { quizId: lobbyData }
