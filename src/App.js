@@ -4,6 +4,8 @@ import logo from './assets/logo_tf8.png';
 import WaitingScreen from './features/waitingScreen';
 import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
 import QuizList from './features/Quiz/QuizList';
+import DisplayQuestion from './features/Quiz/DisplayQuestion';
+import Ranking from './features/Quiz/Ranking';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
 import Connection from './features/connexion/connexion'; 
@@ -72,13 +74,37 @@ function App() {
               } 
             />
                         <Route 
-              path="/waitingScreen" 
-              element={
-                <ProtectedRoute>
-                  <WaitingScreen />
-                </ProtectedRoute>
-              } 
-            />
+                          path="/waitingScreen" 
+                          element={
+                            <ProtectedRoute>
+                              <WaitingScreen />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route
+                          path="/quiz/:quizId"
+                          element={
+                            <ProtectedRoute>
+                              <WaitingScreen />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/quiz/:quizId/play"
+                          element={
+                            <ProtectedRoute>
+                              <DisplayQuestion />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/quiz/:quizId/ranking"
+                          element={
+                            <ProtectedRoute>
+                              <Ranking />
+                            </ProtectedRoute>
+                          }
+                        />
           </Routes>
           <Footer />
         </div>

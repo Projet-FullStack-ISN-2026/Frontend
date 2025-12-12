@@ -28,28 +28,13 @@ function GenerateQuiz() {
   setIsLoading(true);
 
   try {
-    const response = await fetch("http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/quiz", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        subject: valueTexte,
-        count: valueNumber,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("error server");
-    }
-
-    const data = await response.json();
-    console.log("API RESPONSE :", data);
-
-    triggerPopup("ok");
+    // Use quizAPI.createQuiz - if MOCK mode active this will create a quiz locally
+    const data = await quizAPI.createQuiz(valueTexte, Number(valueNumber));
+    console.log('Quiz created (mock or api):', data);
+    triggerPopup('ok');
   } catch (err) {
-    console.error("API ERROR :", err);
-    triggerPopup("error");
+    console.error('API ERROR :', err);
+    triggerPopup('error');
   }
 
   setTimeout(() => setIsLoading(false), 1200);

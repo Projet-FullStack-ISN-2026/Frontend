@@ -2,12 +2,13 @@ import React, { useEffect, useState, useContext } from 'react';
 import '../assets/App.css';
 import '../assets/waitingScreen.css';
 import quizAPI from '../services/quizAPI';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 function WaitingScreen() {
   const { quizId } = useParams();
-  const { token } = useContext(AuthContext) || {};
+  const { token, user } = useContext(AuthContext) || {};
+  const navigate = useNavigate();
   const [lobby, setLobby] = useState(null);
   const [quizTitle, setQuizTitle] = useState('Quiz');
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,17 @@ function WaitingScreen() {
   };
 
   useEffect(() => {
-    loadLobby();
+    const doJoinAndLoad = async () => {
+      try {
+        // try to join automatically (mock will create player id)
+        await quizAPI.joinQuiz(quizId, (user && (user.firstName || user.email)) || 'Player');
+      } catch (e) {
+        // ignore
+      }
+      loadLobby();
+    };
+
+    doJoinAndLoad();
     const interval = setInterval(loadLobby, 2500);
     return () => clearInterval(interval);
   }, [quizId, token]);
@@ -38,6 +49,8 @@ function WaitingScreen() {
       await quizAPI.startQuiz(quizId, token);
       //refresh lobby status after starting
       await loadLobby();
+      // navigate to play screen
+      navigate(`/quiz/${quizId}/play`);
     } catch (err) {
       console.error('Erreur start quiz:', err);
       setError(err.message || 'Impossible de démarrer le quiz');
