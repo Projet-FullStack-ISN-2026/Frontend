@@ -45,6 +45,19 @@ function ProtectedRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/connexion" />;
 }
 
+// Composant pour protéger les routes admin
+function AdminRoute({ children }) {
+  const { isAuthenticated, isLoading, user } = useContext(AuthContext);
+  const isAdmin = user?.role === 100;
+  
+  // Attendre que l'authentification soit vérifiée
+  if (isLoading) {
+    return <div style={{background: 'linear-gradient(180deg, #010005, #28017c, #770056)', minHeight: '100vh'}}></div>;
+  }
+  
+  return isAuthenticated && isAdmin ? children : <Navigate to="/quiz" />;
+}
+
 function App() {
     return (
     <AuthProvider>
@@ -66,8 +79,16 @@ function App() {
             <Route 
               path="/GenerateQuiz" 
               element={
-                <ProtectedRoute>
+                <AdminRoute>
                   <GenerateQuiz />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/waiting/:quizId" 
+              element={
+                <ProtectedRoute>
+                  <WaitingScreen />
                 </ProtectedRoute>
               } 
             />
