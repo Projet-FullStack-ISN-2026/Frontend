@@ -76,6 +76,29 @@
   background: rgba(255,255,255,0.03);
 }
 
+/* Feedback states */
+.option.correct {
+  background: linear-gradient(90deg,#1db974,#109e5f);
+  border-color: rgba(16,158,95,0.9);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(16,158,95,0.12);
+  transform: none;
+}
+
+.option.wrong {
+  background: linear-gradient(90deg,#ff6b6b,#ff3b3b);
+  border-color: rgba(255,80,80,0.95);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(255,80,80,0.12);
+  transform: none;
+}
+
+.option.selected {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.28);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
 .bottom-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;

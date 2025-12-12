@@ -4,12 +4,15 @@ import logo from './assets/logo_tf8.png';
 import WaitingScreen from './features/waitingScreen';
 import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
 import QuizList from './features/Quiz/QuizList';
+import DisplayQuestion from './features/Quiz/DisplayQuestion';
+import Ranking from './features/Quiz/Ranking';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
 import Connection from './features/connexion/connexion'; 
 import Inscription from './features/inscription/inscription';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react'; 
+import ClientWS from './features/websocket/clientWS'
 
 //const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/';
 function Home() {
@@ -92,14 +95,46 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-                        <Route 
-              path="/waitingScreen" 
+            <Route 
+              path="/waiting/:quizId" 
               element={
                 <ProtectedRoute>
                   <WaitingScreen />
                 </ProtectedRoute>
               } 
             />
+                        <Route 
+                          path="/waitingScreen" 
+                          element={
+                            <ProtectedRoute>
+                              <WaitingScreen />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route
+                          path="/quiz/:quizId"
+                          element={
+                            <ProtectedRoute>
+                              <WaitingScreen />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/quiz/:quizId/play"
+                          element={
+                            <ProtectedRoute>
+                              <DisplayQuestion />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/quiz/:quizId/ranking"
+                          element={
+                            <ProtectedRoute>
+                              <Ranking />
+                            </ProtectedRoute>
+                          }
+                        />
           </Routes>
           <Footer />
         </div>

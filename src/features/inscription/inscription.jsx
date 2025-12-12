@@ -17,7 +17,7 @@ const Inscription = () => {
     //rediriger vers quiz si déjà connecté
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/quiz');
+            navigate('/');
         }
     }, [isAuthenticated, navigate]);
     
@@ -31,7 +31,7 @@ const Inscription = () => {
             if (res && res.token) {
                 login(res);
                 showAlert("Successful registration !")
-                navigate('/quiz');
+                navigate('/connexion');
             } else {
                 navigate('/connexion');
             }

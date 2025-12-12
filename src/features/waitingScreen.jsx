@@ -31,7 +31,17 @@ function WaitingScreen() {
   };
 
   useEffect(() => {
-    loadLobby();
+    const doJoinAndLoad = async () => {
+      try {
+        // try to join automatically (mock will create player id)
+        await quizAPI.joinQuiz(quizId, (user && (user.firstName || user.email)) || 'Player');
+      } catch (e) {
+        // ignore
+      }
+      loadLobby();
+    };
+
+    doJoinAndLoad();
     const interval = setInterval(loadLobby, 2500);
     return () => clearInterval(interval);
   }, [quizId, token]);
@@ -41,6 +51,8 @@ function WaitingScreen() {
       await quizAPI.startQuiz(quizId, token);
       //refresh lobby status after starting
       await loadLobby();
+      // navigate to play screen
+      navigate(`/quiz/${quizId}/play`);
     } catch (err) {
       console.error('Erreur start quiz:', err);
       setError(err.message || 'Impossible de démarrer le quiz');

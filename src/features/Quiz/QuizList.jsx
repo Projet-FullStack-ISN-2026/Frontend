@@ -7,7 +7,7 @@ import '../../assets/QuizList.css';
 const QuizList = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuiz] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lobbyStatus, setLobbyStatus] = useState({}); // { quizId: lobbyData }
@@ -31,15 +31,11 @@ const QuizList = () => {
         setLoading(true);
         // Essayer de récupérer depuis l'API
         const data = await quizAPI.getAllQuiz();
-        if (Array.isArray(data) && data.length > 0) {
-          setQuizzes(data);
-        } else {
-          setQuizzes(mockQuizzes);
-        }
+        setQuiz(data || mockQuizzes);
       } catch (err) {
         console.warn('API non disponible, utilisation des données en dur');
         // Fallback sur les données en dur
-        setQuizzes(mockQuizzes);
+        setQuiz(mockQuizzes);
       } finally {
         setLoading(false);
       }
@@ -57,7 +53,7 @@ const QuizList = () => {
           const lobby = await quizAPI.getLobbyStatus(quiz.id);
           statuses[quiz.id] = lobby;
         } catch (err) {
-          // Fallback: si l'API échoue, assumer status 10 (not started) et 0 joueur
+          // Fallback: si l'API échoue, assumer status 10 (not started) et 0 joueurs
           statuses[quiz.id] = { connectedPlayersCount: 0, quizState: { status: 10 } };
         }
       }
@@ -90,9 +86,7 @@ const QuizList = () => {
     }
     // Sinon, rediriger vers la page d'attente
     navigate(`/waiting/${quizId}`);
-  };
-
-  if (loading) {
+  };  if (loading) {
     return (
       <div className="quiz-list-container">
         <div style={{textAlign: 'center', paddingTop: '100px', color: 'white'}}>
