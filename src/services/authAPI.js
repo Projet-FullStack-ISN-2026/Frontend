@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api/v0.0.3';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080';
 
 // Compte en dur pour les tests
 const TEST_ACCOUNT = {
