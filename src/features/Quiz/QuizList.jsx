@@ -7,13 +7,13 @@ import '../../assets/QuizList.css';
 const QuizList = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [quizzes, setQuiz] = useState([]);
+  const [quiz, setQuiz] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lobbyStatus, setLobbyStatus] = useState({}); // { quizId: lobbyData }
   
   // Données en dur (fallback si API non disponible)
-  const mockQuizzes = [
+  const mockquiz = [
     {
       id: 1,
       title: 'Quiz TF8',
@@ -30,12 +30,12 @@ const QuizList = () => {
       try {
         setLoading(true);
         // Essayer de récupérer depuis l'API
-        const data = await quizAPI.getAllQuiz();
-        setQuiz(data || mockQuizzes);
+        const data = await quizAPI.getAllquiz();
+        setQuiz(data || mockquiz);
       } catch (err) {
         console.warn('API non disponible, utilisation des données en dur');
         // Fallback sur les données en dur
-        setQuiz(mockQuizzes);
+        setQuiz(mockquiz);
       } finally {
         setLoading(false);
       }

@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../assets/inscription.css';
+import showAlert from '../../pop_up';
 
 const Inscription = () => {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Inscription = () => {
     const [error, setError] = React.useState('');
     const [loading, setLoading] = React.useState(false);
     
-    //rediriger vers quizzes si déjà connecté
+    //rediriger vers quiz si déjà connecté
     useEffect(() => {
         if (isAuthenticated) {
             navigate('/quiz');
@@ -29,13 +30,15 @@ const Inscription = () => {
             const res = await (await import('../../services/authAPI')).default.register(payload);
             if (res && res.token) {
                 login(res);
+                showAlert("Successful registration !")
                 navigate('/quiz');
             } else {
                 navigate('/connexion');
             }
         } catch (err) {
             console.error('Erreur inscription:', err);
-            setError(err.message || 'Erreur lors de l\'inscription');
+            showAlert("Error during the registration !")
+            setError(err.message || 'Error during the registration');
         } finally {
             setLoading(false);
         }
@@ -44,38 +47,39 @@ const Inscription = () => {
     return (
         <div className="inscription-page">
             <form className="inscription-form" onSubmit={handleSubmit}>
-                <h2 className="inscription-header">INSCRIPTION</h2>
+                <h2 className="inscription-header">Sign up</h2>
 
                 <div className="inscription-field-group">
-                    <label className="inscription-label" htmlFor="nom">NOM</label>
+                    <label className="inscription-label" htmlFor="nom">Last Name</label>
                     <input type="text" id="nom" className="inscription-input" value={lastName} onChange={(e) => setLastName(e.target.value)} required/>
                 </div>
 
                 <div className="inscription-field-group">
-                    <label className="inscription-label" htmlFor="prenom">PRENOM</label>
+                    <label className="inscription-label" htmlFor="prenom">First name</label>
                     <input type="text" id="prenom" className="inscription-input" value={firstName} onChange={(e) => setFirstName(e.target.value)} required/>
                 </div>
 
                 <div className="inscription-field-group">
-                    <label className="inscription-label" htmlFor="mail">MAIL</label>
+                    <label className="inscription-label" htmlFor="mail">email</label>
                     <input type="email" id="mail" className="inscription-input" value={email} onChange={(e) => setEmail(e.target.value)} required/>
                 </div>
 
                 <div className="inscription-field-group">
-                    <label className="inscription-label" htmlFor="motdepasse">MOT DE PASSE</label>
+                    <label className="inscription-label" htmlFor="motdepasse">password</label>
                     <input type="password" id="motdepasse" className="inscription-input" value={password} onChange={(e) => setPassword(e.target.value)} required/>
                 </div>
 
                 <div className="inscription-field-group">
-                    <label className="inscription-label" htmlFor="confirmer">CONFIRMER LE MOT DE PASSE</label>
+                    <label className="inscription-label" htmlFor="confirmer">Confirm password</label>
                     <input type="password" id="confirmer" className="inscription-input" required/>
                 </div>
 
                 {error && <div className="inscription-error">{error}</div>}
                 <button type="submit" className="inscription-submit-button" disabled={loading}>
-                    {loading ? 'En cours...' : 'Valider l\'inscription'}
+                    {loading ? 'Loading...' : 'Validate the registration'}
                 </button>
             </form>
+            <div id="alert-container" style={{ position: 'fixed', top: '20px', right: '20px', zIndex : '9999'}}></div>
         </div>
     );
 };
