@@ -5,6 +5,7 @@ const TEST_ACCOUNT = {
   firstName: 'Marius',
   lastName: 'Crenn',
   email: 'marius@gmail.com',
+  role: 100,
   password: 'marius',
 };
 
@@ -22,7 +23,7 @@ const authAPI = {
         email: TEST_ACCOUNT.email,
         firstName: TEST_ACCOUNT.firstName,
         lastName: TEST_ACCOUNT.lastName,
-        role: 3, // JOUEUR
+        role: 100, // Admin
         token: 'test-token-' + Date.now(),
       };
     }
@@ -51,7 +52,7 @@ const authAPI = {
           email: TEST_ACCOUNT.email,
           firstName: TEST_ACCOUNT.firstName,
           lastName: TEST_ACCOUNT.lastName,
-          role: 3, // JOUEUR
+          role: 100, // ADMIN
         },
       };
     }

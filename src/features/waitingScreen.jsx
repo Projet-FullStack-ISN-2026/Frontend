@@ -7,12 +7,14 @@ import { AuthContext } from '../contexts/AuthContext';
 
 function WaitingScreen() {
   const { quizId } = useParams();
-  const { token, user } = useContext(AuthContext) || {};
   const navigate = useNavigate();
+  const { token, user } = useContext(AuthContext) || {};
+  const isAdmin = user?.role === 100;
   const [lobby, setLobby] = useState(null);
   const [quizTitle, setQuizTitle] = useState('Quiz');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showQuitModal, setShowQuitModal] = useState(false);
 
   const loadLobby = async () => {
     try {
@@ -57,11 +59,24 @@ function WaitingScreen() {
     }
   };
 
+  const handleQuit = () => {
+    setShowQuitModal(true);
+  };
+
+  const confirmQuit = () => {
+    setShowQuitModal(false);
+    navigate('/quiz');
+  };
+
+  const cancelQuit = () => {
+    setShowQuitModal(false);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <div className="quiz-header">
-          <div className="close-icon">✕</div>
+          <div className="close-icon" onClick={handleQuit} title="Quitter">✕</div>
         </div>
 
         <h1 className="quiz-title">{quizTitle}</h1>
@@ -72,11 +87,33 @@ function WaitingScreen() {
         {error && <div className="error-box">{error}</div>}
 
         <div className="button-group">
-          <button className="quiz-button primary" onClick={handleStart} disabled={loading}>
-            Démarrer
-          </button>
+          {isAdmin ? (
+            <button className="quiz-button primary" onClick={handleStart} disabled={loading}>
+              Démarrer
+            </button>
+          ) : (
+            <p className="waiting-message">En attente du démarrage...</p>
+          )}
         </div>
       </header>
+
+      {/* Quit Confirmation Modal */}
+      {showQuitModal && (
+        <div className="modal-overlay" onClick={cancelQuit}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">Quitter le quiz</h2>
+            <p className="modal-message">Êtes-vous sûr de vouloir quitter ? Vous perdrez votre place dans le lobby.</p>
+            <div className="modal-buttons">
+              <button className="modal-btn cancel-btn" onClick={cancelQuit}>
+                Rester
+              </button>
+              <button className="modal-btn confirm-btn" onClick={confirmQuit}>
+                Quitter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
