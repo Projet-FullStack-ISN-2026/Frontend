@@ -6,11 +6,12 @@ import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
 import QuizList from './features/Quiz/QuizList';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
-import Connection from './connexion'; 
-import Inscription from './inscription';
+import Connection from './features/connexion/connexion'; 
+import Inscription from './features/inscription/inscription';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react'; 
 
+//const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/';
 function Home() {
   return (
     <div className="App">
@@ -55,7 +56,7 @@ function App() {
             <Route path="/connexion" element={<Connection />} />
             <Route path="/inscription" element={<Inscription />} />
             <Route 
-              path="/quizzes" 
+              path="/quiz" 
               element={
                 <ProtectedRoute>
                   <QuizList />
@@ -70,6 +71,14 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+                        <Route 
+              path="/waitingScreen" 
+              element={
+                <ProtectedRoute>
+                  <WaitingScreen />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
           <Footer />
         </div>
@@ -78,4 +87,4 @@ function App() {
   );
 }
 
-export default App;
+export default App ;

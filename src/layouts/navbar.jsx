@@ -31,21 +31,22 @@ function Navbar(){
                             </>
                         ) : (
                             <>
-                                <a className="nav-link" href="/quizzes">Quiz</a>
+                                <a className="nav-link" href="/quiz">Quiz</a>
                                 <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
+                                <a className="nav-link" href="/waitingScreen">Waiting Screen</a>
                             </>
                         )}
                     </div>
 
                     <div className="navbar-nav ms-auto">
                         {isAuthenticated && (
-                            <button
+                            <a
                                 className="nav-link btn btn-link"
                                 onClick={handleLogout}
                                 style={{ textDecoration: 'none', color: 'inherit' }}
                             >
                                 Déconnexion
-                            </button>
+                            </a>
                         )}
                     </div>
                 </div>

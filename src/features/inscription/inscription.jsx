@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from './contexts/AuthContext';
-import './assets/inscription.css';
+import { AuthContext } from '../../contexts/AuthContext';
+import '../../assets/inscription.css';
 
 const Inscription = () => {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Inscription = () => {
     //rediriger vers quizzes si déjà connecté
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/quizzes');
+            navigate('/quiz');
         }
     }, [isAuthenticated, navigate]);
     
@@ -26,10 +26,10 @@ const Inscription = () => {
         setLoading(true);
         try {
             const payload = { firstName, lastName, email, password };
-            const res = await (await import('./services/authAPI')).default.register(payload);
+            const res = await (await import('../../services/authAPI')).default.register(payload);
             if (res && res.token) {
                 login(res);
-                navigate('/quizzes');
+                navigate('/quiz');
             } else {
                 navigate('/connexion');
             }
