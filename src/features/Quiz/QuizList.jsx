@@ -7,13 +7,13 @@ import '../../assets/QuizList.css';
 const QuizList = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [quiz, setQuiz] = useState([]);
+  const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lobbyStatus, setLobbyStatus] = useState({}); // { quizId: lobbyData }
   
   // Données en dur (fallback si API non disponible)
-  const mockquiz = [
+  const mockQuizzes = [
     {
       id: 1,
       title: 'Quiz TF8',
@@ -30,12 +30,16 @@ const QuizList = () => {
       try {
         setLoading(true);
         // Essayer de récupérer depuis l'API
-        const data = await quizAPI.getAllquiz();
-        setQuiz(data || mockquiz);
+        const data = await quizAPI.getAllQuiz();
+        if (Array.isArray(data) && data.length > 0) {
+          setQuizzes(data);
+        } else {
+          setQuizzes(mockQuizzes);
+        }
       } catch (err) {
         console.warn('API non disponible, utilisation des données en dur');
         // Fallback sur les données en dur
-        setQuiz(mockquiz);
+        setQuizzes(mockQuizzes);
       } finally {
         setLoading(false);
       }
@@ -86,7 +90,9 @@ const QuizList = () => {
     }
     // Sinon, rediriger vers la page d'attente
     navigate(`/waiting/${quizId}`);
-  };  if (loading) {
+  };
+
+  if (loading) {
     return (
       <div className="quiz-list-container">
         <div style={{textAlign: 'center', paddingTop: '100px', color: 'white'}}>
