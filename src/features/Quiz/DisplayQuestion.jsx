@@ -99,27 +99,7 @@ const DisplayQuestion = () => {
     setSelectedOption(optionId);
   };
 
-  const prevQuestion = async () => {
-    if (!quizDetails) return;
-    const idx = Math.max(0, (localIndex || 0) - 1);
-    // clear timer while switching
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setLocalIndex(idx);
-    localIndexRef.current = idx;
-    // update displayed question immediately
-    const questionObj = quizDetails.questions[idx];
-    if (questionObj) setQuestion({ questionId: questionObj.id, text: questionObj.text, options: questionObj.options.map(o => ({ id: o.id, text: o.text })), timeLimit: questionObj.timeLimit });
-    // reset selection/state
-    setSelectedOption(null);
-    setCorrectOption(null);
-    setIsRevealed(false);
-    setMessage(null);
-    setTimeLeft(20);
-    // do not sync server; local navigation only
-  };
+  
 
   const nextQuestion = async () => {
     if (!quizDetails) return;
@@ -213,7 +193,6 @@ const DisplayQuestion = () => {
             <h2 className="question-title">{question.text}</h2>
             <div className="timer">Time left: {timeLeft}s</div>
             <div className="nav-actions" style={{display:'flex', gap:12, marginBottom:12}}>
-              <button className="action-button" onClick={prevQuestion} disabled={!quizDetails || localIndex <= 0}>Previous</button>
               <div style={{flex:1}} />
               <button className="action-button" onClick={nextQuestion} disabled={!quizDetails || localIndex >= (quizDetails?.questions?.length - 1)}>Next</button>
             </div>
