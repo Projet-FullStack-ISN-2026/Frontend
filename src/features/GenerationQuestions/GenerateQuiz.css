@@ -60,41 +60,6 @@ button:hover {
   transform: scale(1.05);
 }
 
-.popup {
-  position: absolute;
-  top: 20px;
-  right: -350px;
-  padding: 15px 25px;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  z-index: 999;
-  opacity: 0;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
-}
-
-.popup-error {
-  background: #212422;
-  box-shadow: 0 0 12px rgba(211, 80, 80, 0.8);
-}
-
-.popup-ok {
-  background: #212422;
-  box-shadow: 0 0 12px rgba(49, 219, 106, 0.8);
-}
-
-.slide-in {
-  animation: slideInOut 1.5s forwards ease-in-out;
-}
-
-@keyframes slideInOut {
-  0% { right: -350px; opacity: 0; }
-  20% { right: 20px; opacity: 1; }
-  80% { right: 20px; opacity: 1; }
-  100% { right: -350px; opacity: 0; }
-}
-
 
 button:disabled {
   opacity: 0.6;
