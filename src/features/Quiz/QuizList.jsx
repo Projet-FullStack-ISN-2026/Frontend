@@ -30,7 +30,7 @@ const QuizList = () => {
       try {
         setLoading(true);
         // Essayer de récupérer depuis l'API
-        const data = await quizAPI.getAllQuizzes();
+        const data = await quizAPI.getAllQuiz();
         setQuiz(data || mockQuizzes);
       } catch (err) {
         console.warn('API non disponible, utilisation des données en dur');
@@ -53,7 +53,7 @@ const QuizList = () => {
           const lobby = await quizAPI.getLobbyStatus(quiz.id);
           statuses[quiz.id] = lobby;
         } catch (err) {
-          // Fallback: si l'API échoue, assumer status 10 (not started) et 0 joueurs
+          // Fallback: si l'API échoue, assumer status 10 (not started) et 0 joueur
           statuses[quiz.id] = { connectedPlayersCount: 0, quizState: { status: 10 } };
         }
       }
