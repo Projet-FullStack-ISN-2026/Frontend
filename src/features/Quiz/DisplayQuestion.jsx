@@ -1,8 +1,8 @@
 import React from 'react';
-import '../../assets/PrintQuestion.css';
+import '../../assets/DisplayQuestion.css';
 import Timer from '../../layouts/timer';
 
-const PrintQuestion = () => {
+const DisplayQuestion = () => {
   return (
     <div className="question-page">
       <main className="question-card">
@@ -26,4 +26,4 @@ const PrintQuestion = () => {
   );
 };
 
-export default PrintQuestion;
+export default DisplayQuestion;
