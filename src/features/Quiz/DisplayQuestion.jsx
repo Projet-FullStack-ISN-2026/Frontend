@@ -11,7 +11,9 @@ const DisplayQuestion = () => {
   const [question, setQuestion] = useState(null);
   const [quizDetails, setQuizDetails] = useState(null);
   const [localIndex, setLocalIndex] = useState(0);
-  const [manualNav, setManualNav] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+  const localIndexRef = React.useRef(localIndex);
+  const initializedRef = React.useRef(initialized);
   const [loading, setLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState(null);
   const [message, setMessage] = useState(null);
@@ -29,18 +31,20 @@ const DisplayQuestion = () => {
       const details = await quizAPI.getQuizDetails(quizId, token);
       setQuizDetails(details);
       const serverIdx = details?.state?.currentQuestion ?? -1;
-      // if user didn't manually navigate, follow server index; otherwise preserve localIndex
-      if (!manualNav) {
+      // On first load, initialize localIndex from server; afterwards keep localIndex (user navigation controls it)
+      let displayIdx = localIndexRef.current;
+      if (!initializedRef.current) {
         const idx = serverIdx >= 0 ? serverIdx : 0;
         setLocalIndex(idx);
-        const questionObj = details?.questions?.[idx] || null;
-        if (questionObj) setQuestion({ questionId: questionObj.id, text: questionObj.text, options: questionObj.options.map(o => ({ id: o.id, text: o.text })) , timeLimit: questionObj.timeLimit });
-        else setQuestion(null);
-      } else {
-        // update stored details but keep current displayed question
-        const questionObj = details?.questions?.[localIndex] || null;
-        if (questionObj) setQuestion({ questionId: questionObj.id, text: questionObj.text, options: questionObj.options.map(o => ({ id: o.id, text: o.text })) , timeLimit: questionObj.timeLimit });
+        localIndexRef.current = idx;
+        setInitialized(true);
+        initializedRef.current = true;
+        displayIdx = idx;
       }
+      // always update quizDetails and derive the currently displayed question from displayIdx
+      const questionObj = details?.questions?.[displayIdx] || details?.questions?.[0] || null;
+      if (questionObj) setQuestion({ questionId: questionObj.id, text: questionObj.text, options: questionObj.options.map(o => ({ id: o.id, text: o.text })) , timeLimit: questionObj.timeLimit });
+      else setQuestion(null);
     } catch (err) {
       console.error('Error loading question', err);
       setQuestion(null);
@@ -85,6 +89,10 @@ const DisplayQuestion = () => {
     };
   }, [question?.questionId]);
 
+  // keep refs updated when state changes
+  useEffect(() => { localIndexRef.current = localIndex; }, [localIndex]);
+  useEffect(() => { initializedRef.current = initialized; }, [initialized]);
+
   // Selecting an option locally; submission happens on reveal (button click) or timeout
   const handleOption = (optionId) => {
     if (isSubmitting || isRevealed) return;
@@ -100,6 +108,7 @@ const DisplayQuestion = () => {
       timerRef.current = null;
     }
     setLocalIndex(idx);
+    localIndexRef.current = idx;
     // update displayed question immediately
     const questionObj = quizDetails.questions[idx];
     if (questionObj) setQuestion({ questionId: questionObj.id, text: questionObj.text, options: questionObj.options.map(o => ({ id: o.id, text: o.text })), timeLimit: questionObj.timeLimit });
@@ -109,14 +118,7 @@ const DisplayQuestion = () => {
     setIsRevealed(false);
     setMessage(null);
     setTimeLeft(20);
-    // sync server current question so backend and other clients match (mock helper)
-    try {
-      if (quizAPI.setCurrentQuestion) await quizAPI.setCurrentQuestion(quizId, idx);
-    } catch (err) {
-      console.warn('setCurrentQuestion failed', err);
-    }
-    // allow polling to follow server
-    setManualNav(false);
+    // do not sync server; local navigation only
   };
 
   const nextQuestion = async () => {
@@ -127,6 +129,7 @@ const DisplayQuestion = () => {
       timerRef.current = null;
     }
     setLocalIndex(idx);
+    localIndexRef.current = idx;
     const questionObj = quizDetails.questions[idx];
     if (questionObj) setQuestion({ questionId: questionObj.id, text: questionObj.text, options: questionObj.options.map(o => ({ id: o.id, text: o.text })), timeLimit: questionObj.timeLimit });
     setSelectedOption(null);
@@ -134,12 +137,7 @@ const DisplayQuestion = () => {
     setIsRevealed(false);
     setMessage(null);
     setTimeLeft(20);
-    try {
-      if (quizAPI.setCurrentQuestion) await quizAPI.setCurrentQuestion(quizId, idx);
-    } catch (err) {
-      console.warn('setCurrentQuestion failed', err);
-    }
-    setManualNav(false);
+    // do not sync server; local navigation only
   };
 
   const revealAnswers = async () => {
@@ -151,17 +149,48 @@ const DisplayQuestion = () => {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-      // if user navigated manually, tell the mock server to set the current question to localIndex
-      if (manualNav && quizAPI.setCurrentQuestion) {
-        await quizAPI.setCurrentQuestion(quizId, localIndex);
+      // If mock data exists in localStorage, submit locally using the displayed question (localIndex)
+      const mockRaw = localStorage.getItem('mock_quizzes');
+      if (mockRaw) {
+        try {
+          const quizzes = JSON.parse(mockRaw || '[]');
+          const q = quizzes.find(x => x.id === Number(quizId));
+          const questionObj = q?.questions?.[localIndex];
+          const correctOpt = questionObj?.options?.find(o => o.correct) || null;
+          const correctOptId = correctOpt ? correctOpt.id : null;
+          const selected = selectedOption || 0;
+          const correct = correctOptId && Number(selected) === Number(correctOptId);
+          // update player's record
+          const playerId = localStorage.getItem('mock_player_id') || `p_${Date.now()}`;
+          localStorage.setItem('mock_player_id', playerId);
+          let player = q.players.find(p => p.id === playerId);
+          if (!player) {
+            player = { id: playerId, name: `Player ${q.players.length + 1}`, score: 0, answers: [] };
+            q.players.push(player);
+          }
+          player.answers = player.answers || [];
+          player.answers.push({ questionId: questionObj.id, selected: Number(selected), correct: !!correct });
+          if (correct) player.score = (player.score || 0) + 1;
+          // write back
+          localStorage.setItem('mock_quizzes', JSON.stringify(quizzes));
+          setMessage(correct ? 'Correct!' : 'Wrong');
+          setCorrectOption(correctOptId || null);
+          setIsRevealed(true);
+          setIsSubmitting(false);
+        } catch (err) {
+          console.error('mock submit error', err);
+          setIsSubmitting(false);
+        }
+        return;
       }
+
+      // otherwise call real API submit
       const optToSubmit = selectedOption || 0;
       const res = await quizAPI.submitAnswer(quizId, optToSubmit, token);
       setMessage(res.correct ? 'Correct!' : 'Wrong');
       setCorrectOption(res.correctOptionId || null);
       // reveal answers but DO NOT auto-advance; wait for user to click Next
       setIsRevealed(true);
-      // keep manualNav as-is (so frontend stays on the question the user saw)
       setIsSubmitting(false);
     } catch (err) {
       console.error('reveal/submit error', err);
