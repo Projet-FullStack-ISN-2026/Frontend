@@ -48,22 +48,22 @@ const QuizList = () => {
   useEffect(() => {
     const loadLobbyStatuses = async () => {
       const statuses = {};
-      for (const quiz of quizzes) {
+      for (const q of quiz) {
         try {
-          const lobby = await quizAPI.getLobbyStatus(quiz.id);
-          statuses[quiz.id] = lobby;
+          const lobby = await quizAPI.getLobbyStatus(q.id);
+          statuses[q.id] = lobby;
         } catch (err) {
           // Fallback: si l'API échoue, assumer status 10 (not started) et 0 joueur
-          statuses[quiz.id] = { connectedPlayersCount: 0, quizState: { status: 10 } };
+          statuses[q.id] = { connectedPlayersCount: 0, quizState: { status: 10 } };
         }
       }
       setLobbyStatus(statuses);
     };
 
-    if (quizzes.length > 0) {
+    if (quiz.length > 0) {
       loadLobbyStatuses();
     }
-  }, [quizzes]);
+  }, [quiz]);
 
   const getDifficultyColor = (difficulty) => {
     switch(difficulty) {
@@ -113,34 +113,34 @@ const QuizList = () => {
       </div>
 
       <div className="quizzes-list">
-        {quizzes.map((quiz) => {
-          const status = lobbyStatus[quiz.id]?.quizState?.status || 10;
-          const playersCount = lobbyStatus[quiz.id]?.connectedPlayersCount || 0;
-          const isRunning = status === 20;
+        {quiz.map((q) => {
+            const status = lobbyStatus[q.id]?.quizState?.status || 10;
+            const playersCount = lobbyStatus[q.id]?.connectedPlayersCount || 0;
+            const isRunning = status === 20;
           
           return (
             <div 
-              key={quiz.id} 
+                key={q.id} 
               className="quiz-list-item"
-              onClick={() => handleQuizClick(quiz.id, status)}
-              style={{ opacity: isRunning ? 0.5 : 1, cursor: isRunning ? 'not-allowed' : 'pointer' }}
+                onClick={() => handleQuizClick(q.id, status)}
+                style={{ opacity: isRunning ? 0.5 : 1, cursor: isRunning ? 'not-allowed' : 'pointer' }}
             >
               <div className="quiz-item-left">
-                <h3>{quiz.title}</h3>
+                  <h3>{q.title}</h3>
                 <div className="quiz-item-info">
-                  <span>❓ {quiz.questions} questions</span>
-                  <span>👥 {playersCount} joueur(s) en attente</span>
+                    <span>❓ {q.questions} questions</span>
+                    <span>👥 {playersCount} joueur(s) en attente</span>
                 </div>
               </div>
               <div className="quiz-item-right">
                 <span 
                   className="difficulty-badge"
-                  style={{ backgroundColor: getDifficultyColor(quiz.difficulty) }}
-                >
-                  {isRunning ? 'En cours' : quiz.difficulty}
+                    style={{ backgroundColor: getDifficultyColor(q.difficulty) }}
+                  >
+                    {isRunning ? 'En cours' : q.difficulty}
                 </span>
                 <button className="play-button" disabled={isRunning}>
-                  {isRunning ? 'En cours' : 'Jouer →'}
+                    {isRunning ? 'En cours' : 'Jouer →'}
                 </button>
               </div>
             </div>
