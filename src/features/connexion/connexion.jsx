@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import authAPI from '../../services/authAPI';
 import '../../assets/connexion.css';
+import showAlert from '../../pop_up';
 
 const Connection = () => {
     const navigate = useNavigate();
@@ -24,10 +25,11 @@ const Connection = () => {
         try {
             const data = await authAPI.login({ email, password });
             login(data);
+            showAlert("Succesful connection")
             navigate('/quiz');
         } catch (err) {
             console.error('Erreur login:', err);
-            setError(err.message || 'Email ou mot de passe incorrect');
+            setError(err.message || 'Email or password wrong');
         }
     };
 
@@ -41,11 +43,11 @@ const Connection = () => {
                 <h2 className="connexion-header">Connexion</h2>
 
                 <div className="connexion-field-group">
-                    <label className="connexion-label" htmlFor="email">MAIL</label>
+                    <label className="connexion-label" htmlFor="email">E-MAIL</label>
                     <input
                         type="email"
                         id="email"
-                        placeholder="Votre adresse e-mail"
+                        placeholder="Our adresse mail"
                         className="connexion-input"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -54,7 +56,7 @@ const Connection = () => {
                 </div>
 
                 <div className="connexion-field-group">
-                    <label className="connexion-label" htmlFor="password">MOT DE PASSE</label>
+                    <label className="connexion-label" htmlFor="password">Password</label>
                     <input
                         type="password"
                         id="password"
@@ -71,13 +73,14 @@ const Connection = () => {
                 )}
 
                 <button type="submit" className="connexion-button">
-                    Se connecter
+                    Log in
                 </button>
 
                 <Link to="/inscription" className="connexion-signup-link">
-                    Pas encore de compte : <strong>Inscrivez vous ici</strong>
+                    no account yet ? : <strong>sign up here</strong>
                 </Link>
             </form>
+            <div id="alert-container" style={{ position: 'fixed', top: '20px', right: '20px', zIndex : '9999'}}></div>
         </div>
     );
 };
