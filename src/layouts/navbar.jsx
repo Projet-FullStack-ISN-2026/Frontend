@@ -35,6 +35,7 @@ function Navbar(){
                             <>
                                 <a className="nav-link" href="/quiz">Quiz</a>
                                 <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
+                                <a className="nav-link" href="/waitingScreen">Waiting Screen</a>
                             </>
                         )}
                     </div>

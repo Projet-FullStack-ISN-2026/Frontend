@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/esigelec-3a2/test/1.0.0';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080';
 
 // Compte en dur pour les tests
 const TEST_ACCOUNT = {

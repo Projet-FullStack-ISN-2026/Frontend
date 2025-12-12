@@ -1,5 +1,5 @@
 // Service API pour les quiz
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080/api/v0.0.3';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080';
 
 const getStoredToken = () => {
   return localStorage.getItem('authToken') || null;
@@ -215,8 +215,27 @@ export const quizAPI = {
       throw error;
     }
   },
+  getLobbyStatus: async (quizId, token) => {
+    try {
+      const authToken = token || getStoredToken();
+      const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/admin/status`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+        }
+      });
 
-  // Récupérer la réponse (Admin/Animateur)
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération du statut du lobby');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur API getLobbyStatus:', error);
+      throw error;
+    }
+  },
   getAnswer: async (quizId, token) => {
     try {
       const authToken = token || getStoredToken();
