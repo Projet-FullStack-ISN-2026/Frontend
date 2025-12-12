@@ -92,6 +92,14 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+                        <Route 
+              path="/waitingScreen" 
+              element={
+                <ProtectedRoute>
+                  <WaitingScreen />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
           <Footer />
         </div>
