@@ -14,6 +14,12 @@ function ModifyQuiz() {
     const [showNewModal, setShowNewModal] = useState(false);
     const [newQuestion, setNewQuestion] = useState({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
 
+    const storedQuiz = sessionStorage.getItem("generatedQuiz");
+
+
+    const quiz = JSON.parse(storedQuiz);
+    console.log("quiz session",quiz)
+    sessionStorage.removeItem("generatedQuiz");
 
     const loadQuestions = async () => {
         if (!quizID) return;
