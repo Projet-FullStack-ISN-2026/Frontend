@@ -1,0 +1,86 @@
+.navbar {
+  background: white !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Ensure the container aligns items vertically */
+.navbar .container-fluid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.navbar-brand img {
+  filter: brightness(0.95);
+  height: 40px;
+}
+
+/* Make nav a horizontal flex row and vertically center items */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Normalize link padding/height so buttons align */
+.nav-link,
+.navbar .btn-link {
+  color: #333 !important;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  color: #770056 !important;
+}
+
+.navbar-toggler {
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  align-self: center;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28119, 0, 86, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Make sure the right-side controls don't wrap and stay centered */
+.navbar-collapse {
+  display: flex !important;
+  align-items: center;
+}
+
+/* Small screens: keep default bootstrap stacking */
+@media (max-width: 575px) {
+  .navbar .container-fluid {
+    align-items: center;
+  }
+}
+
+/* Ensure right-side logout button is vertically centered */
+.navbar .navbar-nav.ms-auto .nav-link,
+.navbar .navbar-nav.ms-auto .btn-link,
+.navbar .navbar-nav.ms-auto .btn {
+  display: flex !important;
+  align-items: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  height: 100%;
+}
+
+/* Small adjustment to all nav items to avoid subtle offsets */
+.navbar .navbar-nav .nav-link,
+.navbar .navbar-nav .btn-link {
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+}

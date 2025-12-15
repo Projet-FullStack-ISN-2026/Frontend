@@ -1,0 +1,59 @@
+.ranking-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #010005, #28017c, #770056);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.ranking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+}
+
+.logo { font-weight: 700; }
+.close-btn {
+  width: 36px; height: 36px; display:flex; align-items:center; justify-content:center;
+  border-radius:999px; background: rgba(255,255,255,0.06);
+}
+
+.ranking-card {
+  width: min(1100px, 94%);
+  margin: 20px auto 40px auto;
+  padding: 24px 28px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-sizing: border-box;
+}
+
+.ranking-title {
+  text-align: center;
+  font-size: clamp(22px, 3.6vw, 34px);
+  margin: 6px 0 6px 0;
+  text-decoration: underline;
+  font-weight: 700;
+}
+.ranking-subtitle { text-align:center; margin-bottom: 18px; }
+
+.ranking-list {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border-radius: 12px;
+  padding: 18px 26px;
+  margin-bottom: 18px;
+}
+
+.ranking-item { display:flex; align-items:center; padding:8px 6px; }
+.rank-number { width: 40px; color: rgba(255,255,255,0.9); font-weight:600; }
+.player-name { flex:1; text-align:center; color:#fff; font-weight:600; }
+
+.next-wrap { margin-top: 6px; }
+.next-button {
+  width:100%; padding:16px 12px; font-weight:700; border-radius:10px;
+  border:2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.02); color:#fff; cursor:pointer;
+}
+
+@media (max-width: 680px) {
+  .ranking-card { padding: 16px; }
+  .rank-number { width: 30px; }
+}
