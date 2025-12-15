@@ -6,6 +6,8 @@ import GenerateQuiz from './features/GenerationQuestions/GenerateQuiz'
 import QuizList from './features/Quiz/QuizList';
 import DisplayQuestion from './features/Quiz/DisplayQuestion';
 import Ranking from './features/Quiz/Ranking';
+import ModifyQuestion from './features/ModifyQuiz/ModifyQuestion';
+import ModifyQuiz from './features/ModifyQuiz/ModifyQuiz';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Footer from './layouts/footer';
 import Connection from './features/connexion/connexion'; 
@@ -85,7 +87,23 @@ function App() {
                 <AdminRoute>
                   <GenerateQuiz />
                 </AdminRoute>
+              }
+            />
+            <Route 
+              path="/ModifyQuiz" 
+              element={
+                <AdminRoute>
+                  <ModifyQuiz />
+                </AdminRoute>
               } 
+            />
+            <Route
+              path="/ModifyQuiz/:quizID"
+              element={
+                <AdminRoute>
+                  <ModifyQuiz />
+                </AdminRoute>
+              }
             />
             <Route 
               path="/waiting/:quizId" 
