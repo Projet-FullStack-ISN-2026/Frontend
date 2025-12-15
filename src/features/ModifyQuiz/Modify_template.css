@@ -48,7 +48,7 @@
   text-decoration: none;
   color: #fff;
   background: linear-gradient(90deg,#9b4dff,#ff4d6d);
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 10px;
   font-weight:700;
   border: 1px solid rgba(255,255,255,0.06);
@@ -63,11 +63,13 @@
   gap: 16px;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(155,77,255,0.04));
   border: 1px solid rgba(255,255,255,0.06);
-  padding: 20px;
-  border-radius: 14px;
+  padding: 14px;
+  border-radius: 10px;
   margin-bottom: 14px;
   box-shadow: 0 20px 60px rgba(11,6,30,0.6);
   transition: transform .18s ease, box-shadow .18s ease;
+  max-width: 920px;
+  margin: 0 auto;
 }
 .modify-quiz .question-block:hover {
   transform: translateY(-6px);
@@ -76,7 +78,7 @@
 
 .modify-quiz .question-block h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #fff;
 }
 
@@ -94,27 +96,28 @@
 
 .modify-quiz .edit-textarea {
   width: 100%;
-  min-height: 160px;
-  padding: 14px;
+  min-height: 120px;
+  padding: 10px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.08);
   background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   color: #fff;
   box-shadow: inset 0 4px 18px rgba(0,0,0,0.45);
   resize: vertical;
+  max-width: 100%;
 }
 
 .modify-quiz .question-actions {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
 .modify-quiz .question-actions .btn-mod {
-  padding: 12px 22px;
+  padding: 10px 16px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .modify-quiz .question-actions .btn-mod.danger {
@@ -135,6 +138,7 @@
   font-size: 1rem;
   box-shadow: 0 0 10px rgba(255,255,255,0.08);
   transition: 0.18s;
+  max-width: 100%;
 }
 
 .modify-quiz .input_theme input:focus,
@@ -147,7 +151,7 @@
 
 /* Buttons - match GenerateQuiz */
 .modify-quiz .btn-mod {
-  padding: 12px 36px;
+  padding: 8px 14px;
   margin-top: 6px;
   font-size: 16px;
   font-weight: 700;
@@ -180,10 +184,11 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(820px, 96%);
+  width: min(680px, 92%);
+  max-width: 680px;
   background-color: rgba(8,4,20,0.95);
   border-radius: 12px;
-  padding: 18px;
+  padding: 16px;
   border: 2px solid rgba(255,255,255,0.06);
   z-index: 2000;
   text-align: left;
@@ -228,7 +233,7 @@
 
 .modify-quiz .option-input {
   flex: 1;
-  padding: 12px;
+  padding: 10px;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.06);
   background: rgba(0,0,0,0.12);
@@ -254,7 +259,7 @@
 /* ModifyQuestion specific styles (scoped to modify-quiz) */
 .modify-quiz .question-content { flex:1 }
 .modify-quiz .question-text { margin:0; font-size:1.05rem; color:#fff }
-.modify-quiz .edit-textarea { width:100%; min-height:120px; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03); color:#fff }
+.modify-quiz .edit-textarea { width:100%; min-height:120px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03); color:#fff }
 
 .modify-quiz .options-section { margin-top:12px }
 .modify-quiz .options-title { color:#ffd6f0; margin-bottom:8px }
@@ -268,11 +273,19 @@
 /* ensure buttons in this page have spacing */
 .modify-quiz .question-actions .btn-mod { margin-left:8px }
 
+/* Back cross button */
+.modify-quiz .back-cross{
+  position:fixed;left:18px;top:18px;z-index:2200;background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:8px 10px;border-radius:8px;font-size:18px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.6);
+}
+.modify-quiz .back-cross:hover{background:rgba(255,255,255,0.04)}
+
+@media(max-width:720px){.modify-quiz .back-cross{left:12px;top:12px;padding:6px;font-size:16px}}
+
 @media (max-width:720px) {
   .modify-quiz .input_theme input, .modify-quiz .input_number_question input { width: 90% }
-  .modify-quiz .question-block { flex-direction: column; align-items: flex-start }
+  .modify-quiz .question-block { flex-direction: column; align-items: flex-start; padding: 12px }
   .modify-quiz .question-actions { flex-direction: column; align-items: stretch; width: 100%; justify-content: flex-end }
-  .modify-quiz .question-actions .btn-mod { width: 100%; margin-left: 0 }
+  .modify-quiz .question-actions .btn-mod { width: 100%; margin-left: 0; font-size: 14px; padding: 10px }
   .modify-quiz .edit-modal { padding: 14px }
   .modify-quiz .questions-list li { flex-direction: column; align-items: flex-start }
   .modify-quiz .questions-list li a { width: 100%; text-align:center; margin-top:8px }
