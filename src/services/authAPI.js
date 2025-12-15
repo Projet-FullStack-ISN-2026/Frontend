@@ -36,6 +36,7 @@ const authAPI = {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {})

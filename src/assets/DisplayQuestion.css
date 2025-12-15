@@ -67,7 +67,8 @@
   border: 2px solid rgba(255,255,255,0.12);
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+  position: relative; /* needed for badge */
+  transition: transform 0.18s cubic-bezier(.2,.9,.2,1), box-shadow 0.18s, background 0.18s, border-color 0.18s;
 }
 
 .option:hover {
@@ -94,9 +95,41 @@
 }
 
 .option.selected {
-  background: rgba(255,255,255,0.04);
-  border-color: rgba(255,255,255,0.28);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  /* Strong visible selected state */
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 22px 48px rgba(0,0,0,0.45), 0 6px 24px rgba(0,0,0,0.25) inset, 0 0 28px rgba(255,255,255,0.04);
+  transform: translateY(-6px) scale(1.02);
+  font-weight: 800;
+  color: #fff;
+  outline: 3px solid rgba(255,255,255,0.04);
+  z-index: 2;
+  animation: pulseSelected 2.2s ease-in-out infinite;
+}
+
+/* check badge on the right */
+.option.selected::after {
+  content: '✓';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.08);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+@keyframes pulseSelected {
+  0% { box-shadow: 0 18px 40px rgba(255,255,255,0.02); }
+  50% { box-shadow: 0 28px 60px rgba(255,255,255,0.03); }
+  100% { box-shadow: 0 18px 40px rgba(255,255,255,0.02); }
 }
 
 .bottom-actions {
