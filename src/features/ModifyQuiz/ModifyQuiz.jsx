@@ -12,13 +12,12 @@ function ModifyQuiz() {
     const [editing, setEditing] = useState(null); // { id, question, options }
     // New-question state
     const [showNewModal, setShowNewModal] = useState(false);
-    // The system expects 4 options always — present exactly 4 editable option fields
-    const [newQuestion, setNewQuestion] = useState({ text: '', options: [
-        { text: '', correct: false },
-        { text: '', correct: false },
-        { text: '', correct: false },
-        { text: '', correct: false }
-    ], timeLimit: 30 });
+    const [newQuestion, setNewQuestion] = useState({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
+    //recupere les information de generateQuiz
+    const storedQuiz = sessionStorage.getItem("generatedQuiz");
+    const quiz = JSON.parse(storedQuiz);
+    console.log("quiz session",quiz)
+    sessionStorage.removeItem("generatedQuiz");
 
     const loadQuestions = async () => {
         if (!quizID) return;
