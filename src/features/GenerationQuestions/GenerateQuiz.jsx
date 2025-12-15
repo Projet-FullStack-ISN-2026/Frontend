@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import "./GenerateQuiz.css";
 import showAlert from "../../pop_up";
 
 function GenerateQuiz() {
   const [valueTexte, setValueTexte] = useState("");
+  const navigate = useNavigate();
   const [valueNumber, setValueNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -85,16 +87,18 @@ function GenerateQuiz() {
         "generatedQuiz",
         JSON.stringify(finalQuiz)
       );
-
+      console.log("sessionStorage",sessionStorage)
       showAlert("Quiz generated successfully!");
-      window.location.href = `/modifyQuiz/${quizId}`;
+      setTimeout(() => setIsLoading(false), 1000);
+
+      navigate(`/modifyQuiz/${quizId}`);
 
     } catch (err) {
       console.error("API ERROR :", err);
       showAlert("Error API");
     }
 
-    setTimeout(() => setIsLoading(false), 1200);
+    
   };
 
   return (
