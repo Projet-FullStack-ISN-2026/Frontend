@@ -1,5 +1,5 @@
 // Service API pour les quiz
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.186.13:8080';
 
 const getStoredToken = () => {
   return localStorage.getItem('authToken') || null;
@@ -141,6 +141,31 @@ const mockAPI = {
   },
   getStats: async () => ({ message: 'mock stats' }),
   getAnswer: async () => ({ message: 'mock answer' }),
+  deleteQuestion: async (quizId, questionId) => {
+    const quizzes = ensureMock();
+    const q = quizzes.find(x => x.id === Number(quizId)) || quizzes[0];
+    const idx = q.questions.findIndex(t => t.id === Number(questionId));
+    if (idx === -1) throw new Error('Question introuvable');
+    q.questions.splice(idx, 1);
+    writeMock(quizzes);
+    return true;
+  },
+  updateQuestion: async (questionId, questionData) => {
+    const quizzes = ensureMock();
+    for (const q of quizzes) {
+      const qi = q.questions.findIndex(t => t.id === Number(questionId));
+      if (qi !== -1) {
+        // update title/text and options if provided
+        q.questions[qi].text = questionData.question || q.questions[qi].text;
+        if (Array.isArray(questionData.options)) {
+          q.questions[qi].options = questionData.options.map((o, idx) => ({ id: o.id ?? (idx+1), text: o.text, correct: !!o.correct }));
+        }
+        writeMock(quizzes);
+        return q.questions[qi];
+      }
+    }
+    throw new Error('Question introuvable');
+  }
 };
 
 export const quizAPI = USE_MOCK ? mockAPI : {
@@ -392,6 +417,54 @@ export const quizAPI = USE_MOCK ? mockAPI : {
       return await response.json();
     } catch (error) {
       console.error('Erreur API getAnswer:', error);
+      throw error;
+    }
+  },
+
+  // Supprimer une question d'un quiz
+  deleteQuestion: async (quizId, questionId, token) => {
+    try {
+      const authToken = token || getStoredToken();
+      const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/questions/${questionId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+        }
+      });
+
+      if (response.status === 204) return true;
+      if (response.status === 404) throw new Error('Question introuvable');
+      if (response.status === 403) throw new Error('Accès refusé');
+      throw new Error('Erreur lors de la suppression de la question');
+    } catch (error) {
+      console.error('Erreur API deleteQuestion:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour une question
+  updateQuestion: async (questionId, questionData, token) => {
+    try {
+      const authToken = token || getStoredToken();
+      const response = await fetch(`${API_BASE_URL}/questions/${questionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+        },
+        body: JSON.stringify(questionData)
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) throw new Error('Question introuvable');
+        if (response.status === 403) throw new Error('Accès refusé');
+        throw new Error('Erreur lors de la mise à jour de la question');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur API updateQuestion:', error);
       throw error;
     }
   }
