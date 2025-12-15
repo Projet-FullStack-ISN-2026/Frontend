@@ -12,7 +12,13 @@ function ModifyQuiz() {
     const [editing, setEditing] = useState(null); // { id, question, options }
     // New-question state
     const [showNewModal, setShowNewModal] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
+    // The system expects 4 options always — present exactly 4 editable option fields
+    const [newQuestion, setNewQuestion] = useState({ text: '', options: [
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false }
+    ], timeLimit: 30 });
 
     const loadQuestions = async () => {
         if (!quizID) return;
@@ -122,7 +128,7 @@ function ModifyQuiz() {
 
             alert('Question ajoutée !');
             setShowNewModal(false);
-            setNewQuestion({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
+            setNewQuestion({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false }, { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
             loadQuestions();
         } catch (err) {
             console.error('Erreur ADD', err);
@@ -138,6 +144,7 @@ function ModifyQuiz() {
     if (!quizID) {
         return (
             <div className="main modify-quiz">
+                <button className="back-cross" onClick={() => navigate(-1)} aria-label="Retour">✕</button>
                 <h1>Choisir un quiz à modifier</h1>
                 {quizList.length === 0 ? (
                   <div className="empty-list">
@@ -164,6 +171,7 @@ function ModifyQuiz() {
 
     return (
         <div className="main modify-quiz">
+            <button className="back-cross" onClick={() => navigate(-1)} aria-label="Retour">✕</button>
             <h1>Modifier le Quiz</h1>
             {loading && <div>Chargement...</div>}
 
@@ -181,12 +189,6 @@ function ModifyQuiz() {
                     <button onClick={() => setEditing({ id: q.id, question: q.title || q.text, options: q.options || [] })}>
                         Éditer
                     </button>
-
-                    <button
-                        onClick={() => updateQuestion(q.id, { question: q.title || q.text, options: q.options })}
-                    >
-                        Mettre à jour
-                    </button>
                 </div>
             ))}
 
@@ -196,6 +198,7 @@ function ModifyQuiz() {
                     <h3>Ajouter une question</h3>
                     <textarea placeholder="Texte de la question" value={newQuestion.text} onChange={e => setNewQuestion({...newQuestion, text: e.target.value})} />
                     <div className="options-edit">
+                        <p className="small-muted">Le quiz attend toujours 4 options — modifie-les ci‑dessous.</p>
                         {newQuestion.options.map((opt, idx) => (
                             <div className="opt-row" key={idx}>
                                 <input type="text" value={opt.text} placeholder={`Option ${idx+1}`} onChange={e => {
@@ -206,17 +209,8 @@ function ModifyQuiz() {
                                     const opts = newQuestion.options.map((o,i) => i===idx ? {...o, correct: e.target.checked} : o);
                                     setNewQuestion({...newQuestion, options: opts});
                                 }} /> Correct</label>
-                                {newQuestion.options.length > 2 && (
-                                    <button className="btn-mod secondary" onClick={() => {
-                                        const opts = newQuestion.options.filter((_,i) => i!==idx);
-                                        setNewQuestion({...newQuestion, options: opts});
-                                    }}>Suppr</button>
-                                )}
                             </div>
                         ))}
-                        <div style={{marginTop:8}}>
-                            <button className="btn-mod secondary" onClick={() => setNewQuestion({...newQuestion, options: [...newQuestion.options, { text: '', correct: false }]})}>Ajouter une option</button>
-                        </div>
                     </div>
                     <div className="modal-actions">
                         <button className="btn-mod" onClick={addQuestion}>Créer</button>
