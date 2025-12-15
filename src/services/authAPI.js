@@ -30,6 +30,29 @@ const authAPI = {
 
     return await response.json(); // { token, user }
   }
+  ,
+  // Récupérer le profil de l'utilisateur courant via token
+  getProfile: async (token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || 'Impossible de récupérer le profil');
+      }
+
+      return await response.json(); // { id, email, firstName, lastName, role }
+    } catch (err) {
+      console.error('authAPI.getProfile error', err);
+      throw err;
+    }
+  }
 };
 
 export default authAPI;
