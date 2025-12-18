@@ -60,8 +60,24 @@ export const AuthProvider = ({ children }) => {
                         setUser(storedUser);
                     }
                 } else if (storedUser) {
-                    // token missing but user info exists: restore user (may be unauthenticated for API calls)
+                    // token missing but user info exists: restore user and consider authenticated locally
+                    // This prevents forcing the user to reconnect on simple page refresh.
                     setUser(storedUser);
+                    setIsAuthenticated(true);
+                    // Still attempt to validate / refresh the profile from the server (for cookie-based sessions)
+                    try {
+                        console.log('AuthContext.init - validating server session via /auth/me for storedUser');
+                        const profile = await authAPI.getProfile();
+                        console.log('AuthContext.init - server profile for storedUser:', profile);
+                        if (profile) {
+                            setUser(profile);
+                            try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch(e){}
+                            setIsAuthenticated(true);
+                        }
+                    } catch (err) {
+                        console.warn('AuthContext.init - server validation for storedUser failed:', err);
+                        // keep local logged-in state to avoid forcing reconnection on refresh
+                    }
                 } else {
                     // No token and no stored user: attempt to restore session via server-set HttpOnly cookie
                     try {
@@ -85,6 +101,51 @@ export const AuthProvider = ({ children }) => {
             }
         };
         init();
+    }, []);
+
+    // Sync auth state across tabs via storage events
+    useEffect(() => {
+        const onStorage = (e) => {
+            if (!e.key) return;
+            try {
+                if (e.key === 'authToken') {
+                    const newToken = e.newValue;
+                    if (newToken) {
+                        setToken(newToken);
+                        setIsAuthenticated(true);
+                        const storedUserRaw = localStorage.getItem('currentUser');
+                        if (!storedUserRaw) {
+                            authAPI.getProfile(newToken).then(profile => {
+                                if (profile) {
+                                    setUser(profile);
+                                    try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch(e){}
+                                }
+                            }).catch(() => {});
+                        } else {
+                            try { setUser(JSON.parse(storedUserRaw)); } catch(e){}
+                        }
+                    } else {
+                        setToken(null);
+                        setIsAuthenticated(false);
+                        setUser(null);
+                    }
+                }
+
+                if (e.key === 'currentUser') {
+                    const newUserRaw = e.newValue;
+                    if (newUserRaw) {
+                        try { setUser(JSON.parse(newUserRaw)); } catch (err) { setUser(null); }
+                    } else {
+                        setUser(null);
+                    }
+                }
+            } catch (err) {
+                console.warn('AuthContext storage handler error', err);
+            }
+        };
+
+        window.addEventListener('storage', onStorage);
+        return () => window.removeEventListener('storage', onStorage);
     }, []);
 
     // login accepts either { token, user } or simple email (backwards compat)
