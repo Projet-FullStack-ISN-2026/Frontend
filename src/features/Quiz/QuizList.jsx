@@ -7,6 +7,7 @@ import '../../assets/QuizList.css';
 const QuizList = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === 100;
   const [quiz, setQuiz] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +24,7 @@ const QuizList = () => {
       status: 10 // not started
     }
   ];
+  
 
   // Charger les quiz au montage du composant
   useEffect(() => {
@@ -43,6 +45,9 @@ const QuizList = () => {
 
     loadQuiz();
   }, []);
+  const handleGeneratequiz = () => {
+    navigate('/GenerateQuiz')
+  }
 
   // Charger le statut du lobby pour chaque quiz
   useEffect(() => {
@@ -147,6 +152,19 @@ const QuizList = () => {
           );
         })}
       </div>
+      <div className="button-group">
+  {isAdmin ? (
+    <button
+      className="button_waiting"
+      onClick={handleGeneratequiz}
+      disabled={loading}
+    >
+      Ajouter un quiz
+    </button>
+  ) : null}
+</div>
+
+      
     </div>
   );
 };

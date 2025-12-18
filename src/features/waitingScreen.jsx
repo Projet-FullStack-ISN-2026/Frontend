@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
-import '../assets/App.css';
 import '../assets/waitingScreen.css';
+import "./waitingScreen.css";
 import quizAPI from '../services/quizAPI';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
@@ -15,6 +15,8 @@ function WaitingScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showQuitModal, setShowQuitModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
 
   const loadLobby = async () => {
     try {
@@ -24,7 +26,7 @@ function WaitingScreen() {
       setLoading(false);
     } catch (err) {
       console.warn('API unavailable for lobby status, using fallback', err);
-      //mock
+      //mock !!!!!
       setLobby({ connectedPlayersCount: 0, quizState: { quizId: quizId || 1, status: 10 } });
       setLoading(false);
     }
@@ -59,6 +61,21 @@ function WaitingScreen() {
     }
   };
 
+  const modifyQuiz = () => {
+    navigate(`/modifyQuiz/${quizId}`);
+  };
+  const confirmDeleteQuiz = () => {
+    setShowDeleteModal(false);
+    navigate(`/deleteQuiz/${quizId}`);
+  };
+
+  const cancelDeleteQuiz = () => {
+    setShowDeleteModal(false);
+  };
+
+  const resultQuiz = () => {
+    navigate(`/resultQuiz/${quizId}`)
+  }
   const handleQuit = () => {
     setShowQuitModal(true);
   };
@@ -74,7 +91,6 @@ function WaitingScreen() {
 
   return (
     <div className="App">
-      <header className="App-header">
         <div className="quiz-header">
           <div className="close-icon" onClick={handleQuit} title="Quitter">✕</div>
         </div>
@@ -88,14 +104,40 @@ function WaitingScreen() {
 
         <div className="button-group">
           {isAdmin ? (
-            <button className="quiz-button primary" onClick={handleStart} disabled={loading}>
-              Démarrer
-            </button>
+            <>
+              <button
+              className='button_waiting'
+                onClick={handleStart}
+                disabled={loading}
+              >
+                Démarrer
+              </button>
+
+              <button
+              className='button_waiting'
+                onClick={modifyQuiz}
+                disabled={loading}
+              >
+                Modifier
+              </button>
+              <button
+                className="button_waiting"
+                onClick={() => setShowDeleteModal(true)}
+              >
+                Supprimer
+              </button>
+              <button
+              className='button_waiting'
+                onClick={resultQuiz}
+                disabled={loading}
+              >
+                Résultat des quiz précédents
+              </button>
+            </>
           ) : (
             <p className="waiting-message">En attente du démarrage...</p>
           )}
         </div>
-      </header>
 
       {/* Quit Confirmation Modal */}
       {showQuitModal && (
@@ -114,6 +156,38 @@ function WaitingScreen() {
           </div>
         </div>
       )}
+      {showDeleteModal && (
+      <div className="modal-overlay" onClick={cancelDeleteQuiz}>
+        <div
+          className="modal-card danger"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="modal-title">Supprimer le quiz</h2>
+
+          <p className="modal-message">
+            Cette action est <strong>définitive</strong>.<br />
+            Le quiz sera supprimé ainsi que toutes les données associées.
+          </p>
+
+          <div className="modal-buttons">
+            <button
+              className="modal-btn cancel-btn"
+              onClick={cancelDeleteQuiz}
+            >
+              Annuler
+            </button>
+
+            <button
+              className="modal-btn confirm-btn danger"
+              onClick={confirmDeleteQuiz}
+            >
+              Supprimer définitivement
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     </div>
   );
 }
