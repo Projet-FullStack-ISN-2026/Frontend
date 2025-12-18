@@ -13,17 +13,6 @@ const QuizList = () => {
   const [error, setError] = useState(null);
   const [lobbyStatus, setLobbyStatus] = useState({}); // { quizId: lobbyData }
   
-  // Données en dur (fallback si API non disponible)
-  const mockquiz = [
-    {
-      id: 1,
-      title: 'Quiz TF8',
-      difficulty: 'Moyen',
-      questions: 10,
-      players: 5,
-      status: 10 // not started
-    }
-  ];
   
 
   // Charger les quiz au montage du composant
@@ -38,11 +27,45 @@ const QuizList = () => {
         throw new Error("Failed to fetch quizzes");
       }
 
-    loadQuiz();
-  }, []);
-  const handleGeneratequiz = () => {
-    navigate('/GenerateQuiz/')
-  }
+      const quizList = await response.json();
+      setQuiz(quizList); // or quizList.getAllquiz
+
+    } catch (err) {
+      console.error(err);
+      console.warn("API non disponible, utilisation des données en dur");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadQuiz();
+}, []);
+
+  const handleGeneratequiz = async () => {
+  try {
+    const createResponse = await fetch("http://10.3.70.14:8080/quiz", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: "Nouveau quiz",
+        description: ""
+      }),
+    });
+
+    if (!createResponse.ok) throw new Error("Cannot create empty quiz");
+
+    const emptyQuiz = await createResponse.json();
+    console.log("quizID", emptyQuiz.id);
+    navigate(`/ModifyQuiz/${emptyQuiz.id}`)
+  } catch (err) {
+  console.error(err);
+  console.warn('API non disponible, utilisation des données en dur');
+}
+
+};
+
 
   // Charger le statut du lobby pour chaque quiz
   useEffect(() => {
