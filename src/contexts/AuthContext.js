@@ -3,6 +3,19 @@ import authAPI from '../services/authAPI';
 
 export const AuthContext = createContext();
 
+// simple cookie helpers (client-side only, not HttpOnly)
+const setCookie = (name, value, days) => {
+  const expires = days ? `; Max-Age=${days * 24 * 60 * 60}` : '';
+  // secure flag when on https, path=/ so cookie is sent for all paths
+  const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+  document.cookie = `${name}=${encodeURIComponent(value || '')}${expires}; path=/${secure}`;
+};
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+const deleteCookie = (name) => { document.cookie = `${name}=; Max-Age=0; path=/`; };
+
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
@@ -11,26 +24,133 @@ export const AuthProvider = ({ children }) => {
 
     // Vérifier si l'utilisateur était connecté au chargement
     useEffect(() => {
-        const storedUser = localStorage.getItem('currentUser');
-        const storedToken = localStorage.getItem('authToken');
-        // restore token and/or user independently; consider session authenticated if token exists
-        if (storedToken) {
-            setToken(storedToken);
-            setIsAuthenticated(true);
-        }
-        if (storedUser) {
+        // prefer cookie for token (acts like a cookie); fallback to localStorage
+        const init = async () => {
             try {
-                setUser(JSON.parse(storedUser));
-            } catch (error) {
-                console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-                localStorage.removeItem('currentUser');
+                console.log('AuthContext.init - starting restore');
+                const cookieToken = getCookie('authToken');
+                console.log('AuthContext.init - cookieToken:', cookieToken);
+                const storedToken = cookieToken || localStorage.getItem('authToken');
+                console.log('AuthContext.init - storedToken:', storedToken);
+                const storedUserRaw = localStorage.getItem('currentUser');
+                console.log('AuthContext.init - storedUserRaw:', storedUserRaw);
+                let storedUser = null;
+                if (storedUserRaw) {
+                    try { storedUser = JSON.parse(storedUserRaw); } catch (err) { console.warn('Invalid stored user JSON', err); localStorage.removeItem('currentUser'); }
+                }
+
+                if (storedToken) {
+                    setToken(storedToken);
+                    setIsAuthenticated(true);
+                    // if we don't have a stored user, try to fetch it from the API
+                    if (!storedUser) {
+                        try {
+                            console.log('AuthContext.init - fetching profile with token');
+                            const profile = await authAPI.getProfile(storedToken);
+                            console.log('AuthContext.init - profile fetched:', profile);
+                            if (profile) {
+                                setUser(profile);
+                                try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch(e){}
+                            }
+                        } catch (err) {
+                            console.warn('AuthContext.init - profile fetch failed:', err);
+                            console.warn('Could not restore profile from token on init:', err);
+                        }
+                    } else {
+                        setUser(storedUser);
+                    }
+                } else if (storedUser) {
+                    // token missing but user info exists: restore user and consider authenticated locally
+                    // This prevents forcing the user to reconnect on simple page refresh.
+                    setUser(storedUser);
+                    setIsAuthenticated(true);
+                    // Still attempt to validate / refresh the profile from the server (for cookie-based sessions)
+                    try {
+                        console.log('AuthContext.init - validating server session via /auth/me for storedUser');
+                        const profile = await authAPI.getProfile();
+                        console.log('AuthContext.init - server profile for storedUser:', profile);
+                        if (profile) {
+                            setUser(profile);
+                            try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch(e){}
+                            setIsAuthenticated(true);
+                        }
+                    } catch (err) {
+                        console.warn('AuthContext.init - server validation for storedUser failed:', err);
+                        // keep local logged-in state to avoid forcing reconnection on refresh
+                    }
+                } else {
+                    // No token and no stored user: attempt to restore session via server-set HttpOnly cookie
+                    try {
+                        console.log('AuthContext.init - attempting server cookie restore via /auth/me');
+                        const profile = await authAPI.getProfile(); // authAPI.getProfile uses credentials: 'include'
+                        console.log('AuthContext.init - server cookie profile:', profile);
+                        if (profile) {
+                            setUser(profile);
+                            setIsAuthenticated(true);
+                            try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch(e){}
+                        }
+                    } catch (err) {
+                        console.warn('AuthContext.init - server cookie restore failed:', err);
+                        // no server session
+                    }
+                }
+            } catch (err) {
+                console.error('AuthContext initialization error', err);
+            } finally {
+                setIsLoading(false);
             }
-        }
-        setIsLoading(false);
+        };
+        init();
+    }, []);
+
+    // Sync auth state across tabs via storage events
+    useEffect(() => {
+        const onStorage = (e) => {
+            if (!e.key) return;
+            try {
+                if (e.key === 'authToken') {
+                    const newToken = e.newValue;
+                    if (newToken) {
+                        setToken(newToken);
+                        setIsAuthenticated(true);
+                        const storedUserRaw = localStorage.getItem('currentUser');
+                        if (!storedUserRaw) {
+                            authAPI.getProfile(newToken).then(profile => {
+                                if (profile) {
+                                    setUser(profile);
+                                    try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch(e){}
+                                }
+                            }).catch(() => {});
+                        } else {
+                            try { setUser(JSON.parse(storedUserRaw)); } catch(e){}
+                        }
+                    } else {
+                        setToken(null);
+                        setIsAuthenticated(false);
+                        setUser(null);
+                    }
+                }
+
+                if (e.key === 'currentUser') {
+                    const newUserRaw = e.newValue;
+                    if (newUserRaw) {
+                        try { setUser(JSON.parse(newUserRaw)); } catch (err) { setUser(null); }
+                    } else {
+                        setUser(null);
+                    }
+                }
+            } catch (err) {
+                console.warn('AuthContext storage handler error', err);
+            }
+        };
+
+        window.addEventListener('storage', onStorage);
+        return () => window.removeEventListener('storage', onStorage);
     }, []);
 
     // login accepts either { token, user } or simple email (backwards compat)
     const login = async (authData) => {
+        console.log('AuthContext.login - authData:', authData);
         if (!authData) return;
         if (typeof authData === 'string') {
             // backward compatibility: email string
@@ -41,7 +161,9 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
-        const { token: newToken, user: userObj } = authData;
+        // accept multiple token/user shapes from backend
+        const newToken = authData.token || authData.accessToken || authData.authToken || (authData.data && (authData.data.token || authData.data.accessToken)) || null;
+        const userObj = authData.user || authData.profile || (authData.data && authData.data.user) || null;
         const fallbackUserObj = !userObj && (authData.email || authData.role || authData.id)
             ? {
                 id: authData.id,
@@ -54,7 +176,13 @@ export const AuthProvider = ({ children }) => {
 
         if (newToken) {
             setToken(newToken);
-            localStorage.setItem('authToken', newToken);
+            // store token in cookie (acts like "cookie") and also persist in localStorage for compatibility
+            try {
+                setCookie('authToken', newToken, 7); // 7 days
+            } catch (e) {
+                console.warn('Unable to set cookie, falling back to localStorage', e);
+            }
+            try { localStorage.setItem('authToken', newToken); } catch(e) { console.warn('Unable to write authToken to localStorage', e); }
             // mark authenticated even if user object is not provided
             setIsAuthenticated(true);
         }
@@ -71,6 +199,8 @@ export const AuthProvider = ({ children }) => {
             }
         }
 
+        console.log('AuthContext.login - token stored, finalUser computed:', finalUser);
+
         if (finalUser) {
             setUser(finalUser);
             setIsAuthenticated(true);
@@ -79,11 +209,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
+        console.log('AuthContext.logout - clearing auth data');
         setUser(null);
         setToken(null);
         setIsAuthenticated(false);
         localStorage.removeItem('currentUser');
         localStorage.removeItem('authToken');
+        try { deleteCookie('authToken'); } catch(e){}
     };
 
     return (

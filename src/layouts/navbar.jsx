@@ -47,13 +47,13 @@ function Navbar(){
 
                     <div className="nav justify-content-center">
                         {isAuthenticated && (
-                            <a
+                            <button
                                 className="nav-link btn btn-link"
                                 onClick={handleLogout}
                                 style={{ textDecoration: 'none', color: 'inherit',display: 'flex', justifyContent :'center',  }}
                             >
                                 Déconnexion
-                            </a>
+                            </button>
                         )}
                     </div>
                 </div>
