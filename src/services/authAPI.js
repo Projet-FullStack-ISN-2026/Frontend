@@ -6,6 +6,7 @@ const authAPI = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -21,10 +22,11 @@ const authAPI = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
+      credentials: 'include'
     });
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
+      const err = await response.json().catch(() => ({})); 
       throw new Error(err.message || 'Email ou mot de passe incorrect');
     }
 
@@ -34,12 +36,12 @@ const authAPI = {
   // Récupérer le profil de l'utilisateur courant via token
   getProfile: async (token) => {
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        }
+        headers,
+        credentials: 'include'
       });
 
       if (!response.ok) {
