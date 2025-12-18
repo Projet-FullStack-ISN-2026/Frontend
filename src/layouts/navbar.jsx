@@ -2,7 +2,7 @@ import logo from '../assets/logo_tf8.png';
 import '../assets/Navbar.css';
 import showAlert from '../pop_up';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 function Navbar(){
@@ -19,9 +19,9 @@ function Navbar(){
     return (
             <nav className="navbar navbar-expand-lg bg-body-tertiary">
     <div className="container-fluid">
-        <a className="navbar-brand" href="/">
+        <Link className="navbar-brand" to="/">
             <img src={logo} alt="Logo" style={{height: '40px'}} />
-        </a>
+        </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
         </button>
@@ -29,16 +29,18 @@ function Navbar(){
                     <div className="navbar-nav me-auto">
                         {!isAuthenticated ? (
                             <>
-                                <a className="nav-link" href="/connexion">Connexion</a>
-                                <a className="nav-link" href="/inscription">Inscription</a>
+                                <Link className="nav-link" to="/connexion">Connexion</Link>
+                                <Link className="nav-link" to="/inscription">Inscription</Link>
                             </>
                         ) : (
                             <>
-                                <a className="nav-link" href="/quiz">Quiz</a>
+                                <Link className="nav-link" to="/quiz">Quiz</Link>
                                 {isAdmin && (
-                                  <a className="nav-link" href="/GenerateQuiz">Générer un Quiz</a>
+                                  <Link className="nav-link" to="/GenerateQuiz">Générer un Quiz</Link>
                                 )}
-                                <a className="nav-link" href="/waitingScreen">Waiting Screen</a>
+                                {isAdmin && (<Link className="nav-link" to="/ModifyQuiz">Modifier un Quiz</Link>
+                                )}
+                                <Link className="nav-link" to="/waitingScreen">Waiting Screen</Link>
                             </>
                         )}
                     </div>
