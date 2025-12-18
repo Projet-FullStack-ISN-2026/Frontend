@@ -14,7 +14,7 @@ const Connection = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/quiz');
+            navigate('/');
         }
     }, [isAuthenticated, navigate]);
 

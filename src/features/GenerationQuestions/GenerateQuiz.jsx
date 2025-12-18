@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import "./GenerateQuiz.css";
 import showAlert from "../../pop_up";
 
 function GenerateQuiz() {
   const [valueTexte, setValueTexte] = useState("");
+  const navigate = useNavigate();
   const [valueNumber, setValueNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,35 +18,87 @@ function GenerateQuiz() {
     }
 
     setIsLoading(true);
-    //http://localhost/3001/quiz
-    //http://10.3.70.14:8080/esigelec-3a2/test/1.0.0/quiz
+
     try {
-    const response = await fetch("http://localhost:3001/quiz", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        subject: valueTexte,
-        count: Number(valueNumber),
-      }),
-    });
+        //appel api en attente pour recuperer le post
+        /*
+      const createResponse = await fetch("http://10.3.70.14:8080/quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "quiz_nouveau"
+        }),
+      });
+
+      if (!createResponse.ok) throw new Error("Cannot create empty quiz");
+
+      const emptyQuiz = await createResponse.json();
+      const quizId = emptyQuiz.id;
+      */
+      const quizId=6;
+    
+
+      const generateResponse = await fetch("http://10.3.70.14:3001/quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: valueTexte,
+          count: Number(valueNumber),
+        }),
+      });
+
+      if (!generateResponse.ok) throw new Error("LLM generation error");
+
+      const generatedQuiz = await generateResponse.json();
 
 
-      if (!response.ok) throw new Error("Server error");
+      const finalQuiz = {
+        id: quizId,
+        title: generatedQuiz.title,
+        status: 10,
+        questions: generatedQuiz.questions.map((q, qIndex) => ({
+          id: qIndex + 1,
+          question: q.question,
+          options: q.options.map((opt, optIndex) => ({
+            id: optIndex + 1,
+            text: opt.text,
+            isCorrect: opt.isCorrect,
+          })),
+        })),
+      };
 
-      const data = await response.json();
+      console.log("===== QUIZ FINAL =====");
+      console.log(JSON.stringify(finalQuiz, null, 2));
 
-      console.log("===== QUIZ JSON =====");
-      console.log(JSON.stringify(data, null, 2)); 
 
-      showAlert("Quiz Generated Successfully!");
+      const updateResponse = await fetch(
+        `http://10.3.70.14:8080/quiz/${quizId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(finalQuiz),
+        }
+      );
+
+      if (!updateResponse.ok) throw new Error("Quiz update failed");
+
+
+      sessionStorage.setItem(
+        "generatedQuiz",
+        JSON.stringify(finalQuiz)
+      );
+      console.log("sessionStorage",sessionStorage)
+      showAlert("Quiz generated successfully!");
+      setTimeout(() => setIsLoading(false), 1000);
+
+      navigate(`/modifyQuiz/${quizId}`);
+
     } catch (err) {
       console.error("API ERROR :", err);
       showAlert("Error API");
     }
 
-    setTimeout(() => setIsLoading(false), 1200);
+    
   };
 
   return (
