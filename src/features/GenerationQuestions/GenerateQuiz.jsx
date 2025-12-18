@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import "./GenerateQuiz.css";
 import showAlert from "../../pop_up";
+import { API_BASE_URL } from "../../services/authAPI";
+import { AuthContext } from "../../contexts/AuthContext";
 
 function GenerateQuiz() {
+  const { quizID } = useParams();
+  const { token } = useContext(AuthContext) || {};
   const [valueTexte, setValueTexte] = useState("");
   const navigate = useNavigate();
   const [valueNumber, setValueNumber] = useState("");
@@ -11,6 +15,17 @@ function GenerateQuiz() {
 
   const handleGenerate = async () => {
     if (isLoading) return;
+
+    if (!quizID) {
+      showAlert("Aucun quiz sélectionné (ID manquant dans l'URL)");
+      return;
+    }
+
+    const quizId = Number(quizID);
+    if (!Number.isFinite(quizId)) {
+      showAlert("ID de quiz invalide");
+      return;
+    }
 
     if (!valueTexte.trim() || !valueNumber.trim()) {
       showAlert("Please fill all fields!");
@@ -35,12 +50,12 @@ function GenerateQuiz() {
       const emptyQuiz = await createResponse.json();
       const quizId = emptyQuiz.id;
       */
-      const quizId=6;
-    
-
-      const generateResponse = await fetch("http://10.3.70.14:3001/quiz", {
+      const generateResponse = await fetch(`${API_BASE_URL}/quiz`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           subject: valueTexte,
           count: Number(valueNumber),
@@ -58,10 +73,12 @@ function GenerateQuiz() {
         status: 10,
         questions: generatedQuiz.questions.map((q, qIndex) => ({
           id: qIndex + 1,
+          text: q.question,
           question: q.question,
           options: q.options.map((opt, optIndex) => ({
             id: optIndex + 1,
             text: opt.text,
+            correct: opt.isCorrect,
             isCorrect: opt.isCorrect,
           })),
         })),
@@ -69,19 +86,6 @@ function GenerateQuiz() {
 
       console.log("===== QUIZ FINAL =====");
       console.log(JSON.stringify(finalQuiz, null, 2));
-
-
-      const updateResponse = await fetch(
-        `http://10.3.70.14:8080/quiz/${quizId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(finalQuiz),
-        }
-      );
-
-      if (!updateResponse.ok) throw new Error("Quiz update failed");
-
 
       sessionStorage.setItem(
         "generatedQuiz",
@@ -91,7 +95,7 @@ function GenerateQuiz() {
       showAlert("Quiz generated successfully!");
       setTimeout(() => setIsLoading(false), 1000);
 
-      navigate(`/modifyQuiz/${quizId}`);
+      navigate(`/ModifyQuiz/${quizId}`);
 
     } catch (err) {
       console.error("API ERROR :", err);
@@ -103,30 +107,30 @@ function GenerateQuiz() {
 
   return (
     <div className="main">
-      <h1>Generate a Quiz</h1>
+      <h1>Générer un Quiz</h1>
 
       <div className="input_theme">
-        <h2>Subject</h2>
+        <h2>Sujet</h2>
         <input
           type="text"
           value={valueTexte}
-          placeholder="Subject of Quiz"
+          placeholder="Sujet du Quiz"
           onChange={(e) => setValueTexte(e.target.value)}
         />
       </div>
 
       <div className="input_number_question">
-        <h2>Number of Questions</h2>
+        <h2>Nombre de Questions</h2>
         <input
           type="number"
           value={valueNumber}
-          placeholder="Number of questions"
+          placeholder="Nombre de questions"
           onChange={(e) => setValueNumber(e.target.value)}
         />
       </div>
 
       <button disabled={isLoading} onClick={handleGenerate}>
-        {isLoading ? "Loading..." : "Generate"}
+        {isLoading ? "Chargement..." : "Générer"}
       </button>
     </div>
   );

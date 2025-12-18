@@ -35,12 +35,9 @@ function Navbar(){
                         ) : (
                             <>
                                 <Link className="nav-link" to="/quiz">Quiz</Link>
-                                {isAdmin && (
-                                  <Link className="nav-link" to="/GenerateQuiz">Générer un Quiz</Link>
-                                )}
+
                                 {isAdmin && (<Link className="nav-link" to="/ModifyQuiz">Modifier un Quiz</Link>
                                 )}
-                                <Link className="nav-link" to="/waitingScreen">Waiting Screen</Link>
                             </>
                         )}
                     </div>
