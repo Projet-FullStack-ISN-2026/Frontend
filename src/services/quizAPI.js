@@ -61,6 +61,27 @@ const mockAPI = {
     const quizzes = ensureMock();
     return quizzes.find(q => q.id === Number(quizId));
   },
+  updateQuiz: async (quizId, quizData) => {
+    const quizzes = ensureMock();
+    const idx = quizzes.findIndex(q => q.id === Number(quizId));
+    if (idx === -1) throw new Error('Quiz introuvable');
+    const current = quizzes[idx];
+
+    const nextQuestions = Array.isArray(quizData?.questions)
+      ? quizData.questions
+      : (Array.isArray(quizData?.questionsList) ? quizData.questionsList : current.questions);
+
+    const updated = {
+      ...current,
+      ...quizData,
+      id: Number(quizId),
+      questions: nextQuestions,
+    };
+
+    quizzes[idx] = updated;
+    writeMock(quizzes);
+    return updated;
+  },
   createQuiz: async (title, count = 5) => {
     const quizzes = readMock();
     const id = quizzes.length ? Math.max(...quizzes.map(x => x.id)) + 1 : 1;
@@ -235,6 +256,32 @@ export const quizAPI = USE_MOCK ? mockAPI : {
       return await response.json();
     } catch (error) {
       console.error('Erreur API createQuiz:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour un quiz (Admin/Animateur)
+  updateQuiz: async (quizId, quizData, token) => {
+    try {
+      const authToken = token || getStoredToken();
+      const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+        },
+        body: JSON.stringify(quizData)
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) throw new Error('Quiz introuvable');
+        if (response.status === 403) throw new Error('Accès refusé');
+        throw new Error('Erreur lors de la mise à jour du quiz');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur API updateQuiz:', error);
       throw error;
     }
   },
