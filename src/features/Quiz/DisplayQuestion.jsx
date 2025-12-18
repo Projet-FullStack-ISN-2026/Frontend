@@ -130,11 +130,11 @@ const DisplayQuestion = () => {
         timerRef.current = null;
       }
       // If mock data exists in localStorage, submit locally using the displayed question (localIndex)
-      const mockRaw = localStorage.getItem('mock_quizzes');
+      const mockRaw = localStorage.getItem('mock_quiz');
       if (mockRaw) {
         try {
-          const quizzes = JSON.parse(mockRaw || '[]');
-          const q = quizzes.find(x => x.id === Number(quizId));
+          const quiz = JSON.parse(mockRaw || '[]');
+          const q = quiz.find(x => x.id === Number(quizId));
           const questionObj = q?.questions?.[localIndex];
           const correctOpt = questionObj?.options?.find(o => o.correct) || null;
           const correctOptId = correctOpt ? correctOpt.id : null;
@@ -152,7 +152,7 @@ const DisplayQuestion = () => {
           player.answers.push({ questionId: questionObj.id, selected: Number(selected), correct: !!correct });
           if (correct) player.score = (player.score || 0) + 1;
           // write back
-          localStorage.setItem('mock_quizzes', JSON.stringify(quizzes));
+            localStorage.setItem('mock_quiz', JSON.stringify(quiz));
           setMessage(correct ? 'Correct!' : 'Wrong');
           setCorrectOption(correctOptId || null);
           setIsRevealed(true);
