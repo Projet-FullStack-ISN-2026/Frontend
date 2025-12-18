@@ -2,7 +2,20 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080';
 
 const getStoredToken = () => {
-  return localStorage.getItem('authToken') || null;
+  try {
+    const t = localStorage.getItem('authToken');
+    if (t) return t;
+  } catch (e) {
+    // ignore
+  }
+  // fallback: try to read from cookie 'authToken'
+  try {
+    const match = document.cookie.match(new RegExp('(^| )' + 'authToken' + '=([^;]+)'));
+    if (match) return decodeURIComponent(match[2]);
+  } catch (e) {
+    // ignore
+  }
+  return null;
 };
 
 // Mock mode: when REACT_APP_USE_MOCK is 'true' we simulate quiz lifecycle in-memory (localStorage)

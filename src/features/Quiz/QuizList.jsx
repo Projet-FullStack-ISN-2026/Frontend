@@ -28,20 +28,15 @@ const QuizList = () => {
 
   // Charger les quiz au montage du composant
   useEffect(() => {
-    const loadQuiz = async () => {
-      try {
-        setLoading(true);
-        // Essayer de récupérer depuis l'API
-        const data = await quizAPI.getAllquiz();
-        setQuiz(data || mockquiz);
-      } catch (err) {
-        console.warn('API non disponible, utilisation des données en dur');
-        // Fallback sur les données en dur
-        setQuiz(mockquiz);
-      } finally {
-        setLoading(false);
+  const loadQuiz = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch("http://10.3.70.14:8080/quiz");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch quizzes");
       }
-    };
 
     loadQuiz();
   }, []);
@@ -70,18 +65,14 @@ const QuizList = () => {
     }
   }, [quiz]);
 
-  const getDifficultyColor = (difficulty) => {
-    switch(difficulty) {
-      case 'Facile':
-        return '#4CAF50';
-      case 'Moyen':
-        return '#FFC107';
-      case 'Difficile':
-        return '#F44336';
-      default:
-        return '#999';
+  const handleStart =()=>{
+    try {
+      const listQuiz = 1
+      
+    } catch (error) {
+      
     }
-  };
+  }
 
   const handleQuizClick = (quizId, status) => {
     // Si le quiz est en cours (status 20), on ne peut pas rejoindre
@@ -117,7 +108,7 @@ const QuizList = () => {
         <h1>Quiz Disponibles</h1>
       </div>
 
-      <div className="quizzes-list">
+      <div className="quiz-list">
         {quiz.map((q) => {
             const status = lobbyStatus[q.id]?.quizState?.status || 10;
             const playersCount = lobbyStatus[q.id]?.connectedPlayersCount || 0;
@@ -138,14 +129,8 @@ const QuizList = () => {
                 </div>
               </div>
               <div className="quiz-item-right">
-                <span 
-                  className="difficulty-badge"
-                    style={{ backgroundColor: getDifficultyColor(q.difficulty) }}
-                  >
-                    {isRunning ? 'En cours' : q.difficulty}
-                </span>
-                <button className="play-button" disabled={isRunning}>
-                    {isRunning ? 'En cours' : 'Jouer →'}
+                <button className="play-button" disabled={isRunning} onClick={handleStart}>
+                    Jouer
                 </button>
               </div>
             </div>

@@ -23,10 +23,34 @@ const Connection = () => {
         setError('');
 
         try {
-            const data = await authAPI.login({ email, password });
-            login(data);
-            showAlert("Succesful connection")
-            navigate('/');
+                const data = await authAPI.login({ email, password });
+                // Prefer server-side session: attempt to fetch the profile using credentials (cookies)
+                let profile = null;
+                try {
+                    profile = await authAPI.getProfile();
+                } catch (err) {
+                    console.warn('Could not fetch profile after login via /auth/me:', err);
+                }
+
+                if (profile) {
+                    try { localStorage.setItem('currentUser', JSON.stringify(profile)); } catch (e) { console.warn('Could not write currentUser', e); }
+                    // Let AuthContext know about the profile (pass as { user: profile })
+                    await login({ user: profile });
+                } else {
+                    // Fallback: use token/user returned in login response if API doesn't provide /auth/me
+                    const token = data?.token || data?.accessToken || data?.authToken || (data.data && (data.data.token || data.data.accessToken)) || null;
+                    const userObj = data?.user || data?.profile || (data.data && data.data.user) || null;
+                    if (token) {
+                        try { localStorage.setItem('authToken', token); } catch (e) { console.warn('Could not write authToken', e); }
+                    }
+                    if (userObj) {
+                        try { localStorage.setItem('currentUser', JSON.stringify(userObj)); } catch (e) { console.warn('Could not write currentUser', e); }
+                    }
+                    await login(data);
+                }
+
+                showAlert("Successful connection");
+                navigate('/quiz');
         } catch (err) {
             console.error('Erreur login:', err);
             setError(err.message || 'Email or password wrong');

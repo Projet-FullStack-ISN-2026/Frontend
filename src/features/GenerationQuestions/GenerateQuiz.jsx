@@ -37,7 +37,7 @@ function GenerateQuiz() {
     try {
         //appel api en attente pour recuperer le post
         /*
-      const createResponse = await fetch("http://10.3.186.13:8080/quiz", {
+      const createResponse = await fetch("http://10.3.70.14:8080/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
