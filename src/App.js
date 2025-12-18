@@ -81,8 +81,8 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/GenerateQuiz" 
+            <Route
+              path="/GenerateQuiz/:quizID"
               element={
                 <AdminRoute>
                   <GenerateQuiz />

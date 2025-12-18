@@ -46,7 +46,7 @@ const QuizList = () => {
     loadQuiz();
   }, []);
   const handleGeneratequiz = () => {
-    navigate('/GenerateQuiz')
+    navigate('/GenerateQuiz/')
   }
 
   // Charger le statut du lobby pour chaque quiz
