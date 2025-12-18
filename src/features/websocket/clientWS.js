@@ -13,7 +13,7 @@ export default class ClientWS {
     constructor() {
         // Création de l'URL
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const host = '10.3.186.13';
+        const host = '10.3.70.14';
         const port =':3128';
         const serverPath = 'ws/quiz';
         this.url = `${protocol}://${host}${port}/${serverPath}`;

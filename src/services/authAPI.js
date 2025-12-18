@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.186.13:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://10.3.70.14:8080';
 
 const authAPI = {
   register: async (payload) => {

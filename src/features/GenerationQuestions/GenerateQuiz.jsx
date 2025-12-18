@@ -22,7 +22,7 @@ function GenerateQuiz() {
     try {
         //appel api en attente pour recuperer le post
         /*
-      const createResponse = await fetch("http://10.3.186.13:8080/quiz", {
+      const createResponse = await fetch("http://10.3.70.14:8080/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -38,7 +38,7 @@ function GenerateQuiz() {
       const quizId=6;
     
 
-      const generateResponse = await fetch("http://10.3.186.13:3001/quiz", {
+      const generateResponse = await fetch("http://10.3.70.14:3001/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -72,7 +72,7 @@ function GenerateQuiz() {
 
 
       const updateResponse = await fetch(
-        `http://10.3.186.13:8080/quiz/${quizId}`,
+        `http://10.3.70.14:8080/quiz/${quizId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
