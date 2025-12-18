@@ -57,4 +57,5 @@ const authAPI = {
   }
 };
 
+export { authAPI, API_BASE_URL };
 export default authAPI;

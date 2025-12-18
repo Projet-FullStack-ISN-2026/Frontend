@@ -1,29 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { quizAPI } from '../../services/quizAPI';
 import "./Modify_template.css";
+import { AuthContext } from "../../contexts/AuthContext";
 
 function ModifyQuiz() {
     const { quizID } = useParams();  
     const navigate = useNavigate();
+    const { token } = useContext(AuthContext) || {};
     const [questions, setQuestions] = useState([]);
     const [quizList, setQuizList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(null); // { id, question, options }
-    // New-question state
-    const [showNewModal, setShowNewModal] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
-    //recupere les information de generateQuiz
-    const storedQuiz = sessionStorage.getItem("generatedQuiz");
-    const quiz = JSON.parse(storedQuiz);
-    console.log("quiz session",quiz)
-    sessionStorage.removeItem("generatedQuiz");
+    const [pendingGeneratedQuiz, setPendingGeneratedQuiz] = useState(null);
+
+    const quizIdNumber = useMemo(() => {
+        const n = Number(quizID);
+        return Number.isFinite(n) ? n : null;
+    }, [quizID]);
+
+    // The system expects 4 options always — present exactly 4 editable option fields
+    const [newQuestion, setNewQuestion] = useState({ text: '', options: [
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false }
+    ], timeLimit: 30 });
 
     const loadQuestions = async () => {
         if (!quizID) return;
+
+        // If a generated quiz is present in sessionStorage for this quiz, display it
+        try {
+            const raw = sessionStorage.getItem('generatedQuiz');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && Number(parsed.id) === Number(quizID) && Array.isArray(parsed.questions)) {
+                    setPendingGeneratedQuiz(parsed);
+                    setQuestions(parsed.questions);
+                    setLoading(false);
+                    return;
+                }
+            }
+        } catch (e) {
+            // ignore parse errors and continue with API
+        }
+
         try {
             setLoading(true);
-            const data = await quizAPI.getQuizDetails(quizID);
+            const data = await quizAPI.getQuizDetails(quizID, token);
             if (!data) {
                 alert('Quiz non trouvé.');
                 navigate('/ModifyQuiz');
@@ -40,7 +65,9 @@ function ModifyQuiz() {
             setLoading(false);
         }
     };
-
+    function handleGeneratequiz() {
+        navigate(`/GenerateQuiz/${quizID}`);
+    }
     const loadQuizList = async () => {
         try {
             // support different naming between mock and prod implementations
@@ -68,6 +95,16 @@ function ModifyQuiz() {
     const deleteQuestion = async (questionId) => {
         if (!quizID) return;
         if (!window.confirm('Confirmer la suppression de la question ?')) return;
+
+        if (pendingGeneratedQuiz) {
+            const next = (questions || []).filter(q => Number(q.id) !== Number(questionId));
+            setQuestions(next);
+            const updated = { ...pendingGeneratedQuiz, questions: next };
+            setPendingGeneratedQuiz(updated);
+            sessionStorage.setItem('generatedQuiz', JSON.stringify(updated));
+            return;
+        }
+
         try {
             await quizAPI.deleteQuestion(quizID, questionId);
             alert('Question supprimée !');
@@ -79,6 +116,27 @@ function ModifyQuiz() {
     };
 
     const updateQuestion = async (questionId, questionData) => {
+        if (pendingGeneratedQuiz) {
+            const next = (questions || []).map(q => {
+                if (Number(q.id) !== Number(questionId)) return q;
+                const nextText = questionData.question ?? questionData.text ?? q.text ?? q.title;
+                const nextOptions = Array.isArray(questionData.options) ? questionData.options : (q.options || []);
+                return {
+                    ...q,
+                    text: nextText,
+                    title: q.title,
+                    options: nextOptions,
+                };
+            });
+            setQuestions(next);
+            const updated = { ...pendingGeneratedQuiz, questions: next };
+            setPendingGeneratedQuiz(updated);
+            sessionStorage.setItem('generatedQuiz', JSON.stringify(updated));
+            alert('Question mise à jour !');
+            setEditing(null);
+            return;
+        }
+
         try {
             await quizAPI.updateQuestion(questionId, questionData);
             alert('Question mise à jour !');
@@ -104,34 +162,69 @@ function ModifyQuiz() {
                 return;
             }
 
-            // try API method names
-            if (typeof quizAPI.addQuestion === 'function') {
-                await quizAPI.addQuestion(quizID, { question: newQuestion.text, options: newQuestion.options, timeLimit: newQuestion.timeLimit });
-            } else if (typeof quizAPI.createQuestion === 'function') {
-                await quizAPI.createQuestion(quizID, { question: newQuestion.text, options: newQuestion.options, timeLimit: newQuestion.timeLimit });
-            } else {
-                // fallback to mock in localStorage
-                const raw = localStorage.getItem('mock_quizzes');
-                const arr = raw ? JSON.parse(raw) : [];
-                const qIndex = arr.findIndex(q => Number(q.id) === Number(quizID));
-                if (qIndex === -1) throw new Error('Quiz introuvable en mock');
-                const quiz = arr[qIndex];
-                const nextId = quiz.questions && quiz.questions.length ? Math.max(...quiz.questions.map(x=>x.id)) + 1 : 1;
-                const opts = (newQuestion.options || []).map((o, idx) => ({ id: idx+1, text: o.text, correct: !!o.correct }));
+            if (pendingGeneratedQuiz) {
+                const nextId = questions && questions.length ? Math.max(...questions.map(x => Number(x.id) || 0)) + 1 : 1;
+                const opts = (newQuestion.options || []).map((o, idx) => ({ id: idx + 1, text: o.text, correct: !!o.correct }));
                 const qObj = { id: nextId, text: newQuestion.text, options: opts, timeLimit: newQuestion.timeLimit || 30 };
-                quiz.questions = quiz.questions || [];
-                quiz.questions.push(qObj);
-                arr[qIndex] = quiz;
-                localStorage.setItem('mock_quizzes', JSON.stringify(arr));
+                const next = [...(questions || []), qObj];
+                setQuestions(next);
+                const updated = { ...pendingGeneratedQuiz, questions: next };
+                setPendingGeneratedQuiz(updated);
+                sessionStorage.setItem('generatedQuiz', JSON.stringify(updated));
+            } else {
+                // try API method names
+                if (typeof quizAPI.addQuestion === 'function') {
+                    await quizAPI.addQuestion(quizID, { question: newQuestion.text, options: newQuestion.options, timeLimit: newQuestion.timeLimit });
+                } else if (typeof quizAPI.createQuestion === 'function') {
+                    await quizAPI.createQuestion(quizID, { question: newQuestion.text, options: newQuestion.options, timeLimit: newQuestion.timeLimit });
+                } else {
+                    // fallback to mock in localStorage
+                    const raw = localStorage.getItem('mock_quizzes');
+                    const arr = raw ? JSON.parse(raw) : [];
+                    const qIndex = arr.findIndex(q => Number(q.id) === Number(quizID));
+                    if (qIndex === -1) throw new Error('Quiz introuvable en mock');
+                    const quiz = arr[qIndex];
+                    const nextId = quiz.questions && quiz.questions.length ? Math.max(...quiz.questions.map(x=>x.id)) + 1 : 1;
+                    const opts = (newQuestion.options || []).map((o, idx) => ({ id: idx+1, text: o.text, correct: !!o.correct }));
+                    const qObj = { id: nextId, text: newQuestion.text, options: opts, timeLimit: newQuestion.timeLimit || 30 };
+                    quiz.questions = quiz.questions || [];
+                    quiz.questions.push(qObj);
+                    arr[qIndex] = quiz;
+                    localStorage.setItem('mock_quizzes', JSON.stringify(arr));
+                }
             }
 
             alert('Question ajoutée !');
-            setShowNewModal(false);
             setNewQuestion({ text: '', options: [ { text: '', correct: false }, { text: '', correct: false }, { text: '', correct: false }, { text: '', correct: false } ], timeLimit: 30 });
-            loadQuestions();
+            if (!pendingGeneratedQuiz) {
+                loadQuestions();
+            }
         } catch (err) {
             console.error('Erreur ADD', err);
             alert(err.message || 'Erreur ajout de la question');
+        }
+    };
+
+    const handleValidateGeneratedQuiz = async () => {
+        if (!pendingGeneratedQuiz || !quizIdNumber) return;
+        try {
+            setLoading(true);
+            const payload = { ...pendingGeneratedQuiz, id: quizIdNumber, questions: questions || [] };
+            if (typeof quizAPI.updateQuiz === 'function') {
+                await quizAPI.updateQuiz(quizIdNumber, payload, token);
+            } else {
+                // fallback: attempt update via updateQuestion API is not applicable
+                throw new Error('updateQuiz non disponible');
+            }
+            sessionStorage.removeItem('generatedQuiz');
+            setPendingGeneratedQuiz(null);
+            alert('Changements validés !');
+            await loadQuestions();
+        } catch (err) {
+            console.error('Erreur validation quiz:', err);
+            alert(err.message || 'Erreur lors de la validation');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -176,8 +269,16 @@ function ModifyQuiz() {
 
             {/* Add question button */}
             <div style={{margin: '10px 0 18px 0'}}>
-                <button className="btn-mod" onClick={() => setShowNewModal(true)}>Ajouter une question</button>
+                <button className="btn-mod" onClick={() => handleGeneratequiz()}>Ajouter une question</button>
             </div>
+
+            {pendingGeneratedQuiz && (
+                <div style={{margin: '0 0 18px 0'}}>
+                    <button className="btn-mod" onClick={handleValidateGeneratedQuiz} disabled={loading}>
+                        Valider
+                    </button>
+                </div>
+            )}
 
             {questions.map(q => (
                 <div key={q.id} className="question-block">
@@ -191,32 +292,6 @@ function ModifyQuiz() {
                 </div>
             ))}
 
-            {/* New question modal */}
-            {showNewModal && (
-                <div className="edit-modal">
-                    <h3>Ajouter une question</h3>
-                    <textarea placeholder="Texte de la question" value={newQuestion.text} onChange={e => setNewQuestion({...newQuestion, text: e.target.value})} />
-                    <div className="options-edit">
-                        <p className="small-muted">Le quiz attend toujours 4 options — modifie-les ci‑dessous.</p>
-                        {newQuestion.options.map((opt, idx) => (
-                            <div className="opt-row" key={idx}>
-                                <input type="text" value={opt.text} placeholder={`Option ${idx+1}`} onChange={e => {
-                                    const opts = newQuestion.options.map((o,i) => i===idx ? {...o, text: e.target.value} : o);
-                                    setNewQuestion({...newQuestion, options: opts});
-                                }} />
-                                <label><input type="checkbox" checked={!!opt.correct} onChange={e => {
-                                    const opts = newQuestion.options.map((o,i) => i===idx ? {...o, correct: e.target.checked} : o);
-                                    setNewQuestion({...newQuestion, options: opts});
-                                }} /> Correct</label>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="modal-actions">
-                        <button className="btn-mod" onClick={addQuestion}>Créer</button>
-                        <button className="btn-mod secondary" onClick={() => setShowNewModal(false)}>Annuler</button>
-                    </div>
-                </div>
-            )}
 
             {editing && (
                 <div className="edit-modal">
