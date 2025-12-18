@@ -13,17 +13,6 @@ const QuizList = () => {
   const [error, setError] = useState(null);
   const [lobbyStatus, setLobbyStatus] = useState({}); // { quizId: lobbyData }
   
-  // Données en dur (fallback si API non disponible)
-  const mockquiz = [
-    {
-      id: 1,
-      title: 'Quiz TF8',
-      difficulty: 'Moyen',
-      questions: 10,
-      players: 5,
-      status: 10 // not started
-    }
-  ];
   
 
   // Charger les quiz au montage du composant
@@ -69,6 +58,7 @@ const QuizList = () => {
 
     const emptyQuiz = await createResponse.json();
     console.log("quizID", emptyQuiz.id);
+    navigate(`/ModifyQuiz/${emptyQuiz.id}`)
   } catch (err) {
   console.error(err);
   console.warn('API non disponible, utilisation des données en dur');
