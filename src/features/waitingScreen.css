@@ -32,3 +32,27 @@
     transform: rotate(360deg);
   }
 }
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+
+.button_waiting {
+  font-size: 22px;
+  font-weight: 700;
+  width: 70vh;
+  border: 2px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+  background: transparent;
+  color: white;
+  box-shadow: 0 0 15px rgba(255,255,255,0.3);
+  transition: 0.25s;
+}
+
+.button_waiting:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+}
